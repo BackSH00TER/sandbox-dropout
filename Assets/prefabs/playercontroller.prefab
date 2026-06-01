@@ -213,6 +213,24 @@
         "RemoveUnownedItems": true,
         "Source": "Manual",
         "WorkshopItems": []
+      },
+      {
+        "__type": "PlayerReadyState",
+        "__guid": "9968c7a9-e541-4a7c-900b-2cd7dd15fc34",
+        "__enabled": true,
+        "Flags": 0,
+        "Circle": {
+          "_type": "component",
+          "component_id": "658825d8-b38b-4e01-9100-f4258ecd85d5",
+          "go": "3504a76a-72cc-4c08-9e5c-e69d0e955452",
+          "component_type": "ModelRenderer"
+        },
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
       }
     ],
     "Children": [
