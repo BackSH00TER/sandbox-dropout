@@ -280,7 +280,7 @@
         ],
         "Children": [
           {
-            "__guid": "163cda16-c6ef-4a16-9f8c-feb2ee3422ea",
+            "__guid": "bd03200a-47ea-4597-a0f9-66a377c6d665",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - baseball_cap_blue_white",
@@ -297,7 +297,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "e474a808-016d-4e85-8bf5-f05da532ed1e",
+                "__guid": "137b7c9a-2033-4f0b-af16-76b950239ec8",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -349,7 +349,7 @@
             "Children": []
           },
           {
-            "__guid": "676ebd5b-578f-4d03-993e-8ec53d346d53",
+            "__guid": "65773405-6e3b-43fc-ad7a-8742793b9057",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - cargo_pants_army",
@@ -366,7 +366,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "056ba393-d724-468c-946e-1a93977a8387",
+                "__guid": "d16ea84f-4b9f-492a-8e9c-05179d050764",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -418,7 +418,7 @@
             "Children": []
           },
           {
-            "__guid": "e255c099-044f-495d-97e4-1ba840971a03",
+            "__guid": "b60d2b01-259e-47f4-a61d-6dc9a2142c7e",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - tshirt",
@@ -435,7 +435,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "0a52093f-bb5f-4f38-8771-28c45cbf758d",
+                "__guid": "d2134603-0625-4f59-9bd6-e7b51ef0150d",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -487,7 +487,7 @@
             "Children": []
           },
           {
-            "__guid": "23c09b2b-a09c-47fe-9173-292642d8c77f",
+            "__guid": "7d9c25b5-3b04-43d7-8af4-55026d801b6a",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - army_boots",
@@ -504,7 +504,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "15fc964a-a348-46fd-93ef-d23a50680b85",
+                "__guid": "100e01c2-c088-4161-89ea-217b286d9645",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -556,7 +556,7 @@
             "Children": []
           },
           {
-            "__guid": "e6c56361-9e82-447a-ae64-733ef890ac9f",
+            "__guid": "207ed526-de72-4c9e-a38b-4c14b587cddc",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - cardigan_dark",
@@ -573,7 +573,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "623e86d0-3a6b-4720-b745-039c61ae1485",
+                "__guid": "205d70fe-ef05-438e-b588-91c3c43d9f22",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -620,6 +620,85 @@
                 },
                 "Tint": "1,1,1,1",
                 "UseAnimGraph": true
+              }
+            ],
+            "Children": []
+          },
+          {
+            "__guid": "0b21aa14-f235-44ef-a31d-ba92a05e347c",
+            "__version": 2,
+            "Flags": 0,
+            "Name": "ReadyState",
+            "Position": "4.89912415,-13.1647863,71.10569",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": false,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [
+              {
+                "__type": "Sandbox.TextRenderer",
+                "__guid": "978b75a4-6936-4964-8588-f0e62ab0cdcd",
+                "__enabled": true,
+                "Flags": 0,
+                "__version": 2,
+                "BlendMode": "Normal",
+                "FogStrength": 1,
+                "HorizontalAlignment": "Center",
+                "OnComponentDestroy": null,
+                "OnComponentDisabled": null,
+                "OnComponentEnabled": null,
+                "OnComponentFixedUpdate": null,
+                "OnComponentStart": null,
+                "OnComponentUpdate": null,
+                "RenderOptions": {
+                  "GameLayer": true,
+                  "OverlayLayer": false,
+                  "BloomLayer": false,
+                  "AfterUILayer": false
+                },
+                "Scale": 0.3,
+                "TextScope": {
+                  "Text": "Hello! ❤",
+                  "TextColor": "0.45103,0.47149,0.5297,1",
+                  "FontName": "Poppins",
+                  "FontSize": 64,
+                  "FontWeight": 800,
+                  "FontItalic": false,
+                  "FontVariantNumeric": "Normal",
+                  "LineHeight": 1,
+                  "LetterSpacing": 0,
+                  "WordSpacing": 0,
+                  "FilterMode": "Bilinear",
+                  "FontSmooth": "Auto",
+                  "Outline": {
+                    "Enabled": false,
+                    "Size": 4,
+                    "Color": "0,0,1,1"
+                  },
+                  "Shadow": {
+                    "Enabled": false,
+                    "Size": 4,
+                    "Color": "0,0,0,1",
+                    "Offset": "4,4"
+                  },
+                  "OutlineUnder": {
+                    "Enabled": false,
+                    "Size": 4,
+                    "Color": "0,1,0,1"
+                  },
+                  "ShadowUnder": {
+                    "Enabled": false,
+                    "Size": 4,
+                    "Color": "0,0,0,1",
+                    "Offset": "4,4"
+                  }
+                },
+                "VerticalAlignment": "Center"
               }
             ],
             "Children": []
@@ -694,6 +773,52 @@
             "Static": false,
             "Surface": null,
             "SurfaceVelocity": "0,0,0"
+          }
+        ],
+        "Children": []
+      },
+      {
+        "__guid": "3504a76a-72cc-4c08-9e5c-e69d0e955452",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "ReadyStateIndicator",
+        "Position": "0,0,78.286026",
+        "Rotation": "0,0,0,1",
+        "Scale": "0.100000001,0.100000001,0.100000001",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "Sandbox.ModelRenderer",
+            "__guid": "658825d8-b38b-4e01-9100-f4258ecd85d5",
+            "__enabled": true,
+            "Flags": 0,
+            "BodyGroups": 18446744073709551615,
+            "CreateAttachments": false,
+            "LodOverride": null,
+            "MaterialGroup": null,
+            "MaterialOverride": null,
+            "Materials": null,
+            "Model": "models/dev/sphere.vmdl",
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "RenderOptions": {
+              "GameLayer": true,
+              "OverlayLayer": false,
+              "BloomLayer": false,
+              "AfterUILayer": false
+            },
+            "RenderType": "Off",
+            "Tint": "1,0,0,1"
           }
         ],
         "Children": []
