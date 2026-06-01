@@ -1,0 +1,230 @@
+{
+  "RootObject": {
+    "__guid": "fcb4ec2e-b377-48ce-af8d-fd9d8f62ca10",
+    "__version": 2,
+    "Flags": 0,
+    "Name": "tile",
+    "Position": "0,0,0",
+    "Rotation": "0,0,0,1",
+    "Scale": "1,1,0.25",
+    "Tags": "",
+    "Enabled": true,
+    "NetworkMode": 1,
+    "NetworkFlags": 0,
+    "NetworkOrphaned": 0,
+    "NetworkTransmit": true,
+    "OwnerTransfer": 1,
+    "Components": [],
+    "Children": [
+      {
+        "__guid": "8d79bb99-487a-4213-b221-d8c878134be8",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "TileModelCollider",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "Sandbox.BoxCollider",
+            "__guid": "5c93cb99-a1cf-4b71-b616-8d2b76d8d7f1",
+            "__enabled": true,
+            "Flags": 0,
+            "Center": "0,0,0",
+            "ColliderFlags": 0,
+            "Elasticity": null,
+            "Friction": null,
+            "IsTrigger": false,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "OnObjectTriggerEnter": null,
+            "OnObjectTriggerExit": null,
+            "OnTriggerEnter": null,
+            "OnTriggerExit": null,
+            "RollingResistance": null,
+            "Scale": "50,50,50",
+            "Static": false,
+            "Surface": null,
+            "SurfaceVelocity": "0,0,0"
+          }
+        ],
+        "Children": [
+          {
+            "__guid": "e775be06-f2bb-4974-906b-ca802ac38921",
+            "__version": 2,
+            "Flags": 0,
+            "Name": "TileModel",
+            "Position": "0,0,0",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [
+              {
+                "__type": "Sandbox.ModelRenderer",
+                "__guid": "62eb1dbd-cacb-4ce7-97eb-979899725c43",
+                "__enabled": true,
+                "Flags": 0,
+                "BodyGroups": 18446744073709551615,
+                "CreateAttachments": false,
+                "LodOverride": null,
+                "MaterialGroup": null,
+                "MaterialOverride": "materials/generic/floor_tile_c.vmat",
+                "Materials": null,
+                "Model": "models/dev/box.vmdl",
+                "OnComponentDestroy": null,
+                "OnComponentDisabled": null,
+                "OnComponentEnabled": null,
+                "OnComponentFixedUpdate": null,
+                "OnComponentStart": null,
+                "OnComponentUpdate": null,
+                "RenderOptions": {
+                  "GameLayer": true,
+                  "OverlayLayer": false,
+                  "BloomLayer": false,
+                  "AfterUILayer": false
+                },
+                "RenderType": "On",
+                "Tint": "0.44067,0.75613,0.90233,1"
+              }
+            ],
+            "Children": []
+          }
+        ]
+      },
+      {
+        "__guid": "d54d48dc-af53-4f68-a242-6aeda9b63b29",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "TileTriggerCollider",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "Sandbox.BoxCollider",
+            "__guid": "9d491a61-e82a-4a15-a2db-3d8ee5c1cfd8",
+            "__enabled": true,
+            "Flags": 0,
+            "Center": "0,0,50",
+            "ColliderFlags": 0,
+            "Elasticity": null,
+            "Friction": null,
+            "IsTrigger": true,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "OnObjectTriggerEnter": null,
+            "OnObjectTriggerExit": null,
+            "OnTriggerEnter": null,
+            "OnTriggerExit": null,
+            "RollingResistance": null,
+            "Scale": "50,50,50",
+            "Static": false,
+            "Surface": null,
+            "SurfaceVelocity": "0,0,0"
+          },
+          {
+            "__type": "Tile",
+            "__guid": "ec26e48f-c4ec-4117-93e3-4afeff272ff6",
+            "__enabled": true,
+            "Flags": 0,
+            "BreakDelay": 1,
+            "DepressDepth": 5,
+            "DepressSpeed": 25,
+            "FallDuration": 2,
+            "FallMass": 100,
+            "FlashSpeed": 12,
+            "Model": {
+              "_type": "component",
+              "component_id": "62eb1dbd-cacb-4ce7-97eb-979899725c43",
+              "go": "e775be06-f2bb-4974-906b-ca802ac38921",
+              "component_type": "ModelRenderer"
+            },
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "SolidCollider": {
+              "_type": "component",
+              "component_id": "5c93cb99-a1cf-4b71-b616-8d2b76d8d7f1",
+              "go": "8d79bb99-487a-4213-b221-d8c878134be8",
+              "component_type": "BoxCollider"
+            },
+            "TileRoot": {
+              "_type": "gameobject",
+              "go": "fcb4ec2e-b377-48ce-af8d-fd9d8f62ca10"
+            },
+            "TriggerCollider": {
+              "_type": "component",
+              "component_id": "9d491a61-e82a-4a15-a2db-3d8ee5c1cfd8",
+              "go": "d54d48dc-af53-4f68-a242-6aeda9b63b29",
+              "component_type": "BoxCollider"
+            },
+            "WobbleAngle": 5,
+            "WobbleSpeed": 25
+          }
+        ],
+        "Children": []
+      }
+    ],
+    "__properties": {
+      "NetworkInterpolation": true,
+      "TimeScale": 1,
+      "WantsSystemScene": true,
+      "Metadata": {},
+      "NavMesh": {
+        "Enabled": false,
+        "IncludeStaticBodies": true,
+        "IncludeKeyframedBodies": true,
+        "EditorAutoUpdate": false,
+        "AgentHeight": 64,
+        "AgentRadius": 16,
+        "AgentStepSize": 18,
+        "AgentMaxSlope": 40,
+        "ExcludedBodies": "",
+        "IncludedBodies": "",
+        "DeferGeneration": false,
+        "CustomBounds": false
+      }
+    },
+    "__variables": []
+  },
+  "ResourceVersion": 2,
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "DontBreakAsTemplate": false,
+  "__references": [
+    "facepunch.floortilec#92506"
+  ],
+  "__version": 2
+}
