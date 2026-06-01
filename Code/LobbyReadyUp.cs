@@ -1,10 +1,9 @@
 using Sandbox;
 
-// Trigger listener for the lobby ready-up zone. Flips the networked
-// PlayerReadyState.IsReady on the player that entered/exited. The indicator
-// color and lobby board both react to that bool via PlayerReadyState's change
-// callback, so this component intentionally knows nothing about visuals.
-
+/// <summary>
+/// Trigger listener for the lobby ready-up zone. Flips the networked
+/// <see cref="PlayerReadyState.IsReady"/> on the player that entered/exited.
+/// </summary>
 public sealed class LobbyReadyUp : Component, Component.ITriggerListener
 {
 	public void OnTriggerEnter( Collider other )
