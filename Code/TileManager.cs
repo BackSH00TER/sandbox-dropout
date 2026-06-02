@@ -44,7 +44,6 @@ public sealed class TileManager : Component
 			var layerGo = new GameObject( true, $"Layer_{layer}" );
 			layerGo.SetParent( GameObject );
 			layerGo.LocalPosition = new Vector3( 0f, 0f, -layer * cellZ );
-			//layerGo.NetworkSpawn();
 
 			for ( int x = 0; x < Width; x++ )
 			{

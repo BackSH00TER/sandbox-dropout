@@ -3,19 +3,34 @@ using Sandbox;
 
 public sealed class Tile : Component, Component.ITriggerListener
 {
-	[Property] public float BreakDelay { get; set; } = 1.0f;
-	[Property] public float FallDuration { get; set; } = 2.0f;
-	[Property] public float WobbleAngle { get; set; } = 5.0f;
-	[Property] public float WobbleSpeed { get; set; } = 25.0f;
-	[Property] public float FallMass { get; set; } = 100f;
-	[Property] public float FlashSpeed { get; set; } = 12f;
-	[Property] public float DepressDepth { get; set; } = 3f;
-	[Property] public float DepressSpeed { get; set; } = 25f;
-	[Property] public Collider SolidCollider { get; set; }
-	[Property] public Collider TriggerCollider { get; set; }
-	[Property] public ModelRenderer Model { get; set; }
-	[Property] public GameObject TileRoot { get; set; }
+	// Timing + physics for the break sequence (delay before breaking, how long the
+	// debris falls before despawn, mass applied so it actually falls, and the
+	// flash pulse rate as the tile is about to give way).
+	[Property, Group( "Break" )] public float BreakDelay { get; set; } = 1.0f;
+	[Property, Group( "Break" )] public float FallDuration { get; set; } = 2.0f;
+	[Property, Group( "Break" )] public float FallMass { get; set; } = 100f;
+	[Property, Group( "Break" )] public float FlashSpeed { get; set; } = 12f;
 
+	// Pre-break wobble: max roll angle in degrees and how fast it oscillates
+	// (radians/sec fed into Sin).
+	[Property, Group( "Wobble" )] public float WobbleAngle { get; set; } = 5.0f;
+	[Property, Group( "Wobble" )] public float WobbleSpeed { get; set; } = 25.0f;
+
+	// Visual dip when a player is standing on the tile: how far down (local units)
+	// and how fast the model lerps toward depressed/rest.
+	[Property, Group( "Depress" )] public float DepressDepth { get; set; } = 3f;
+	[Property, Group( "Depress" )] public float DepressSpeed { get; set; } = 25f;
+
+	// Wired up in the prefab inspector. SolidCollider is what the player stands on
+	// (flipped to a trigger on break). TriggerCollider detects step-on. Model is the
+	// renderer used for flash + depression bob (must be a child so we can move it
+	// without moving the colliders). TileRoot is the prefab root we destroy on fall.
+	[Property, Group( "References" )] public Collider SolidCollider { get; set; }
+	[Property, Group( "References" )] public Collider TriggerCollider { get; set; }
+	[Property, Group( "References" )] public ModelRenderer Model { get; set; }
+	[Property, Group( "References" )] public GameObject TileRoot { get; set; }
+
+	// Synced state used for host/client coordination.
 	[Sync] private bool _triggered { get; set; } = false;
 	[Sync] private bool _falling { get; set; } = false;
 
@@ -32,6 +47,7 @@ public sealed class Tile : Component, Component.ITriggerListener
 
 	protected override void OnStart()
 	{
+		// Cache the initial rotation and build a deterministic random wobble offset.
 		_restRotation = TileRoot.IsValid() ? TileRoot.WorldRotation : WorldRotation;
 		var rng = new Random( HashCode.Combine( GameObject.Id ) );
 		_wobblePhase = (float)rng.NextDouble() * MathF.PI * 2f;
@@ -43,6 +59,7 @@ public sealed class Tile : Component, Component.ITriggerListener
 			_baseTint = Model.Tint;
 		}
 
+		// Start with the trigger disabled; the tile becomes active only when requested.
 		if ( TriggerCollider.IsValid() )
 		{
 			TriggerCollider.Enabled = false;
@@ -51,11 +68,13 @@ public sealed class Tile : Component, Component.ITriggerListener
 
 	protected override void OnFixedUpdate()
 	{
+		// Host handles authoritative break timing and destruction.
 		if ( Networking.IsHost )
 		{
 			HostFixedUpdate();
 		}
 
+		// All clients handle local animation and state application.
 		ClientFixedUpdate();
 	}
 
@@ -86,6 +105,7 @@ public sealed class Tile : Component, Component.ITriggerListener
 
 		if ( Model.IsValid() && !_falling )
 		{
+			// Smoothly depress the tile when players are standing on it.
 			var target = _playersOnTile > 0 ? _modelRestPosition + Vector3.Down * DepressDepth : _modelRestPosition;
 			Model.LocalPosition = Vector3.Lerp( Model.LocalPosition, target, Time.Delta * DepressSpeed );
 		}
@@ -116,6 +136,7 @@ public sealed class Tile : Component, Component.ITriggerListener
 
 		_playersOnTile++;
 
+		// Only the host can begin the break countdown.
 		if ( !Networking.IsHost || _triggered || _falling ) return;
 
 		_triggered = true;
@@ -151,6 +172,7 @@ public sealed class Tile : Component, Component.ITriggerListener
 		if ( _appliedBreakLocally ) return;
 		_appliedBreakLocally = true;
 
+		// Convert the walkable collider into a trigger so the player falls through.
 		if ( SolidCollider.IsValid() )
 			SolidCollider.IsTrigger = true;
 

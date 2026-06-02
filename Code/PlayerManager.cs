@@ -5,6 +5,9 @@ public sealed class PlayerManager : Component, Component.INetworkListener
 	[Property] public GameObject PlayerPrefab { get; set; }
 	[Property] public TileManager TileManager { get; set; }
 
+	/// <summary>
+	/// Spawns player characters at random tile positions. Called by GameManager when the game starts.
+	/// </summary>
 	public void SpawnPlayers()
 	{
 		if ( !Networking.IsHost ) return;
