@@ -5,16 +5,24 @@
 
 <root>
     <div class="board">
-        <div class="title">Players</div>
-        <div class="grid">
-            @foreach (var player in Scene.GetAllComponents<PlayerReadyState>())
-            {
-                <div class="cell">
-                    <div class="name">@player.DisplayName</div>
-                    <div class="dot @(player.IsReady ? "ready" : "notready")"></div>
-                </div>
-            }
-        </div>
+        @if (LaunchSeconds > 0)
+        {
+            <div class="title">Starting in</div>
+            <div class="launch-number">@LaunchSeconds</div>
+        }
+        else
+        {
+            <div class="title">Players</div>
+            <div class="grid">
+                @foreach (PlayerReadyState player in Scene.GetAllComponents<PlayerReadyState>())
+                {
+                    <div class="cell">
+                        <div class="name">@player.DisplayName</div>
+                        <div class="dot @(player.IsReady ? "ready" : "notready")"></div>
+                    </div>
+                }
+            </div>
+        }
     </div>
 </root>
 
@@ -77,13 +85,33 @@
     .cell .dot.notready {
         background-color: #e74c3c;
     }
+
+    .launch-number {
+        font-size: 1200px;
+        font-weight: 900;
+        color: #2ecc71;
+        width: 100%;
+        flex-grow: 1;
+        justify-content: center;
+        align-items: center;
+    }
 </style>
 
 @code {
+    private int LaunchSeconds
+    {
+        get
+        {
+            LobbyManager mgr = LobbyManager.Current;
+            if (mgr is null || !mgr.IsLaunching) return 0;
+            return System.Math.Max(1, (int)System.MathF.Ceiling(mgr.LaunchSecondsRemaining));
+        }
+    }
+
     protected override int BuildHash()
     {
-        var parts = Scene.GetAllComponents<PlayerReadyState>()
+        IEnumerable<string> parts = Scene.GetAllComponents<PlayerReadyState>()
             .Select(p => $"{p.DisplayName}:{p.IsReady}");
-        return System.HashCode.Combine(string.Join(",", parts));
+        return System.HashCode.Combine(string.Join(",", parts), LaunchSeconds);
     }
 }
