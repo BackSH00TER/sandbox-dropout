@@ -18,7 +18,15 @@ public sealed class PlayerReadyState : Component
 
     protected override void OnStart()
     {
+        // Only show the overhead indicator when there's a lobby in this scene.
+        ShowIndicator( LobbyManager.Current != null );
         ApplyTint( IsReady );
+    }
+
+    /// <summary>Show or hide the overhead indicator. The lobby toggles this on while we're in the lobby scene.</summary>
+    public void ShowIndicator( bool visible )
+    {
+        if ( Circle.IsValid() ) Circle.Enabled = visible;
     }
 
     private void OnIsReadyChanged( bool oldValue, bool newValue )

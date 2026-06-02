@@ -17,9 +17,6 @@ public sealed class LobbyManager : Component
 	/// <summary>Minimum number of connected players required before the launch countdown can start.</summary>
 	[Property] public int MinPlayers { get; set; } = 1;
 
-	/// <summary>Seconds to wait, with everyone still ready, before actually loading the game scene.</summary>
-	[Property] public float LaunchSeconds { get; set; } = 3f;
-
 	/// <summary>Seconds left on the launch countdown. -1 means no countdown is running. Synced so clients can show it.</summary>
 	[Sync] public float LaunchSecondsRemaining { get; private set; } = -1f;
 
@@ -27,6 +24,9 @@ public sealed class LobbyManager : Component
 
 	/// <summary>Scene-wide singleton so the lobby UI can find us without a hard reference.</summary>
 	public static LobbyManager Current { get; private set; }
+
+	/// <summary>Seconds to wait, with everyone still ready, before actually loading the game scene.</summary>
+	private float LaunchSeconds { get; set; } = 3f;
 
 	private TimeUntil _launchAt;
 	private bool _isCountdownActive;
