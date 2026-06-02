@@ -17,10 +17,11 @@ public sealed class LobbyManager : Component
 	/// <summary>Minimum number of connected players required before the launch countdown can start.</summary>
 	[Property] public int MinPlayers { get; set; } = 1;
 
-	/// <summary>Seconds left on the launch countdown. -1 means no countdown is running. Synced so clients can show it.</summary>
-	[Sync] public float LaunchSecondsRemaining { get; private set; } = -1f;
+	/// <summary>True on every client while the launch countdown is running.</summary>
+	public bool IsLaunching { get; private set; }
 
-	public bool IsLaunching => LaunchSecondsRemaining >= 0f;
+	/// <summary>Seconds left on the launch countdown on this client. Only meaningful while <see cref="IsLaunching"/>.</summary>
+	public float LaunchSecondsRemaining => MathF.Max( 0f, (float)_launchAt );
 
 	/// <summary>Scene-wide singleton so the lobby UI can find us without a hard reference.</summary>
 	public static LobbyManager Current { get; private set; }
@@ -29,7 +30,6 @@ public sealed class LobbyManager : Component
 	private float LaunchSeconds { get; set; } = 3f;
 
 	private TimeUntil _launchAt;
-	private bool _isCountdownActive;
 	private bool _hasLaunched;
 
 	protected override void OnEnabled()
@@ -45,35 +45,45 @@ public sealed class LobbyManager : Component
 
 	protected override void OnUpdate()
 	{
+		// Host owns the state machine; everyone runs the launch-elapsed check locally
+		// (broadcast-started, so all clients hit zero at roughly the same time).
+		if ( IsLaunching && (float)_launchAt <= 0f )
+		{
+			if ( Networking.IsHost && !_hasLaunched )
+			{
+				_hasLaunched = true;
+				LoadGameScene();
+			}
+			IsLaunching = false;
+		}
+
 		if ( !Networking.IsHost ) return;
 		if ( _hasLaunched ) return;
 
 		var states = Scene.GetAllComponents<PlayerReadyState>().ToList();
 		bool areAllPlayersReady = states.Count >= MinPlayers && states.All( s => s.IsReady );
 
-		if ( areAllPlayersReady )
+		if ( areAllPlayersReady && !IsLaunching )
 		{
-			if ( !_isCountdownActive )
-			{
-				_isCountdownActive = true;
-				_launchAt = LaunchSeconds;
-			}
-
-			LaunchSecondsRemaining = MathF.Max( 0f, (float)_launchAt );
-
-			if ( (float)_launchAt <= 0f )
-			{
-				_hasLaunched = true;
-				LaunchSecondsRemaining = -1f;
-				LoadGameScene();
-			}
+			BroadcastCountdownStart( LaunchSeconds );
 		}
-		else if ( _isCountdownActive )
+		else if ( !areAllPlayersReady && IsLaunching )
 		{
-			// Someone walked out (or disconnected) — cancel.
-			_isCountdownActive = false;
-			LaunchSecondsRemaining = -1f;
+			BroadcastCountdownCancel();
 		}
+	}
+
+	[Rpc.Broadcast]
+	private void BroadcastCountdownStart( float seconds )
+	{
+		_launchAt = seconds;
+		IsLaunching = true;
+	}
+
+	[Rpc.Broadcast]
+	private void BroadcastCountdownCancel()
+	{
+		IsLaunching = false;
 	}
 
 	private void LoadGameScene()
