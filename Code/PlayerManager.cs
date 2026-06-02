@@ -27,6 +27,12 @@ public sealed class PlayerManager : Component, Component.INetworkListener
 
 	public void EnablePlayersInput()
 	{
+		EnablePlayersInputNetwork();
+	}
+
+	[Rpc.Broadcast]
+	private void EnablePlayersInputNetwork()
+	{
 		foreach ( var pc in Scene.GetAllComponents<PlayerController>() )
 		{
 			pc.UseInputControls = true;

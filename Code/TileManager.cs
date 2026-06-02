@@ -68,9 +68,9 @@ public sealed class TileManager : Component
 
 	public void ActivateGrid()
 	{
-		foreach ( var tile in GameObject.GetComponentsInChildren<GameObject>() )
+		foreach ( var tile in GameObject.GetComponentsInChildren<Tile>() )
 		{
-			tile.Enabled = true;
+			tile.SetTriggerEnabled( true );
 		}
 	}
 
