@@ -78,15 +78,15 @@
       }
     },
     {
-      "__guid": "ef8c013e-26a0-422a-b003-e3441e55b7e6",
+      "__guid": "773eda4d-7122-46ce-876c-5b956792ee66",
       "__version": 2,
       "Flags": 0,
-      "Name": "Plane",
-      "Position": "0,0,0",
+      "Name": "HUD",
+      "Position": "-1386.64636,-165.852112,502.694061",
       "Rotation": "0,0,0,1",
-      "Scale": "10,10,1",
+      "Scale": "1,1,1",
       "Tags": "",
-      "Enabled": false,
+      "Enabled": true,
       "NetworkMode": 2,
       "NetworkFlags": 0,
       "NetworkOrphaned": 0,
@@ -94,81 +94,107 @@
       "OwnerTransfer": 1,
       "Components": [
         {
-          "__type": "Sandbox.ModelRenderer",
-          "__guid": "21e2f389-3750-4174-b90f-c11bc239b7ee",
+          "__type": "Sandbox.ScreenPanel",
+          "__guid": "77bc7273-2829-428b-8a8e-e0326ad47bc8",
           "__enabled": true,
           "Flags": 0,
-          "BodyGroups": 18446744073709551615,
-          "CreateAttachments": false,
-          "LodOverride": null,
-          "MaterialGroup": null,
-          "MaterialOverride": null,
-          "Materials": null,
-          "Model": "models/dev/plane.vmdl",
+          "AutoScreenScale": true,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null,
-          "RenderOptions": {
-            "GameLayer": true,
-            "OverlayLayer": false,
-            "BloomLayer": false,
-            "AfterUILayer": false
-          },
-          "RenderType": "On",
-          "Tint": "1,1,1,1"
+          "Opacity": 1,
+          "Scale": 1,
+          "ScaleStrategy": "ConsistentHeight",
+          "TargetCamera": null,
+          "ZIndex": 100
         },
         {
-          "__type": "Sandbox.PlaneCollider",
-          "__guid": "6dc95f72-0892-4102-b5e0-32ac0b25bebf",
+          "__type": "Sandbox.SpleefHud",
+          "__guid": "e33ff9a6-9f6f-41fb-b2c9-c0b837309677",
           "__enabled": true,
           "Flags": 0,
-          "Center": "0,0,0",
-          "ColliderFlags": 0,
-          "Elasticity": null,
-          "Friction": null,
-          "IsTrigger": false,
-          "Normal": "0,0,1",
+          "GameManager": {
+            "_type": "component",
+            "component_id": "9c1514bd-02c2-481d-8dab-bf84c8252e59",
+            "go": "f6fe2301-0d3c-46cc-bdc8-0b4ede82ca70",
+            "component_type": "GameManager"
+          },
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
-          "OnComponentUpdate": null,
-          "OnObjectTriggerEnter": null,
-          "OnObjectTriggerExit": null,
-          "OnTriggerEnter": null,
-          "OnTriggerExit": null,
-          "RollingResistance": null,
-          "Scale": "100,100",
-          "Static": true,
-          "Surface": null,
-          "SurfaceVelocity": "0,0,0"
+          "OnComponentUpdate": null
         }
       ],
       "Children": []
     },
     {
-      "__guid": "3174e6fa-6eca-4942-8051-1633b0653778",
+      "__guid": "f6fe2301-0d3c-46cc-bdc8-0b4ede82ca70",
       "__version": 2,
       "Flags": 0,
-      "Name": "Platform",
-      "Position": "0,0,13.8300409",
+      "Name": "GameManager",
+      "Position": "0,0,0",
       "Rotation": "0,0,0,1",
       "Scale": "1,1,1",
       "Tags": "",
       "Enabled": true,
-      "NetworkMode": 1,
+      "NetworkMode": 2,
       "NetworkFlags": 0,
       "NetworkOrphaned": 0,
       "NetworkTransmit": true,
       "OwnerTransfer": 1,
       "Components": [
         {
-          "__type": "Platform",
-          "__guid": "bc58cb6d-71ac-4f62-a9d4-893f94d8f2df",
+          "__type": "GameManager",
+          "__guid": "9c1514bd-02c2-481d-8dab-bf84c8252e59",
+          "__enabled": true,
+          "Flags": 0,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "PlayerManager": {
+            "_type": "component",
+            "component_id": "1fae0bda-555c-4b91-861a-9d295583d822",
+            "go": "6c42ae36-d268-4c7e-8a1e-417fbbd3a858",
+            "component_type": "PlayerManager"
+          },
+          "SceneToLoad": "scenes/spleef.scene",
+          "TileManager": {
+            "_type": "component",
+            "component_id": "671d0c06-f9f2-44fc-8219-11bd4afba293",
+            "go": "6aefde79-5015-4ec6-8d5a-438608964588",
+            "component_type": "TileManager"
+          }
+        }
+      ],
+      "Children": []
+    },
+    {
+      "__guid": "6aefde79-5015-4ec6-8d5a-438608964588",
+      "__version": 2,
+      "Flags": 0,
+      "Name": "TileManager",
+      "Position": "0,0,0",
+      "Rotation": "0,0,0,1",
+      "Scale": "1,1,1",
+      "Tags": "",
+      "Enabled": true,
+      "NetworkMode": 2,
+      "NetworkFlags": 0,
+      "NetworkOrphaned": 0,
+      "NetworkTransmit": true,
+      "OwnerTransfer": 1,
+      "Components": [
+        {
+          "__type": "TileManager",
+          "__guid": "671d0c06-f9f2-44fc-8219-11bd4afba293",
           "__enabled": true,
           "Flags": 0,
           "Centered": true,
@@ -193,80 +219,11 @@
       "Children": []
     },
     {
-      "__guid": "1caac796-91da-4530-a072-62ef8a42dd11",
+      "__guid": "6c42ae36-d268-4c7e-8a1e-417fbbd3a858",
       "__version": 2,
       "Flags": 0,
-      "Name": "GameManager",
-      "Position": "139.336868,-392.983948,389.318726",
-      "Rotation": "0,0,0,1",
-      "Scale": "1,1,1",
-      "Tags": "",
-      "Enabled": true,
-      "NetworkMode": 1,
-      "NetworkFlags": 0,
-      "NetworkOrphaned": 0,
-      "NetworkTransmit": true,
-      "OwnerTransfer": 1,
-      "Components": [
-        {
-          "__type": "Sandbox.ScreenPanel",
-          "__guid": "062e7dc0-5efc-4671-9927-a50872fcd36e",
-          "__enabled": true,
-          "Flags": 0,
-          "AutoScreenScale": true,
-          "OnComponentDestroy": null,
-          "OnComponentDisabled": null,
-          "OnComponentEnabled": null,
-          "OnComponentFixedUpdate": null,
-          "OnComponentStart": null,
-          "OnComponentUpdate": null,
-          "Opacity": 1,
-          "Scale": 1,
-          "ScaleStrategy": "ConsistentHeight",
-          "TargetCamera": null,
-          "ZIndex": 100
-        },
-        {
-          "__type": "GameState",
-          "__guid": "d7ddeae0-0de7-4804-8f31-822a64d434f4",
-          "__enabled": true,
-          "Flags": 0,
-          "CountdownSeconds": 10,
-          "GoDisplayDuration": 1,
-          "OnComponentDestroy": null,
-          "OnComponentDisabled": null,
-          "OnComponentEnabled": null,
-          "OnComponentFixedUpdate": null,
-          "OnComponentStart": null,
-          "OnComponentUpdate": null,
-          "Platform": {
-            "_type": "component",
-            "component_id": "bc58cb6d-71ac-4f62-a9d4-893f94d8f2df",
-            "go": "3174e6fa-6eca-4942-8051-1633b0653778",
-            "component_type": "Platform"
-          }
-        },
-        {
-          "__type": "Sandbox.spleef.SpleefHud",
-          "__guid": "4b48077f-811d-4d48-baa1-aff13d3b21d2",
-          "__enabled": true,
-          "Flags": 0,
-          "OnComponentDestroy": null,
-          "OnComponentDisabled": null,
-          "OnComponentEnabled": null,
-          "OnComponentFixedUpdate": null,
-          "OnComponentStart": null,
-          "OnComponentUpdate": null
-        }
-      ],
-      "Children": []
-    },
-    {
-      "__guid": "38cf0444-fd9d-42c2-acba-257ea7a53c1b",
-      "__version": 2,
-      "Flags": 0,
-      "Name": "NetworkController",
-      "Position": "139.336868,-392.983948,389.318726",
+      "Name": "PlayerManager",
+      "Position": "0,0,0",
       "Rotation": "0,0,0,1",
       "Scale": "1,1,1",
       "Tags": "",
@@ -278,8 +235,8 @@
       "OwnerTransfer": 1,
       "Components": [
         {
-          "__type": "Sandbox.NetworkHelper",
-          "__guid": "77c07f77-d260-4c3b-83ef-3852cd9036d8",
+          "__type": "PlayerManager",
+          "__guid": "1fae0bda-555c-4b91-861a-9d295583d822",
           "__enabled": true,
           "Flags": 0,
           "OnComponentDestroy": null,
@@ -292,27 +249,22 @@
             "_type": "gameobject",
             "prefab": "prefabs/playercontroller.prefab"
           },
-          "SpawnPoints": [
-            {
-              "_type": "gameobject",
-              "go": "af353dda-f293-41e0-9f8c-a3753d3dffbc"
-            },
-            {
-              "_type": "gameobject",
-              "go": "df0c5df4-353e-4893-b5a5-9edae3f5e633"
-            }
-          ],
-          "StartServer": true
+          "TileManager": {
+            "_type": "component",
+            "component_id": "671d0c06-f9f2-44fc-8219-11bd4afba293",
+            "go": "6aefde79-5015-4ec6-8d5a-438608964588",
+            "component_type": "TileManager"
+          }
         }
       ],
       "Children": []
     },
     {
-      "__guid": "af353dda-f293-41e0-9f8c-a3753d3dffbc",
+      "__guid": "65b04251-72ad-424e-8506-89aa08092e7c",
       "__version": 2,
       "Flags": 0,
-      "Name": "SpawnPoint",
-      "Position": "-112,-48.0000076,32",
+      "Name": "KillBox",
+      "Position": "0,0,-995.82428",
       "Rotation": "0,0,0,1",
       "Scale": "1,1,1",
       "Tags": "",
@@ -323,100 +275,9 @@
       "NetworkTransmit": true,
       "OwnerTransfer": 1,
       "Components": [
-        {
-          "__type": "Sandbox.SpawnPoint",
-          "__guid": "60ebe786-20d1-4232-b463-835e46f065f3",
-          "__enabled": true,
-          "Flags": 0,
-          "Color": "0.8902,0.31765,0.05098,1",
-          "OnComponentDestroy": null,
-          "OnComponentDisabled": null,
-          "OnComponentEnabled": null,
-          "OnComponentFixedUpdate": null,
-          "OnComponentStart": null,
-          "OnComponentUpdate": null
-        }
-      ],
-      "Children": []
-    },
-    {
-      "__guid": "df0c5df4-353e-4893-b5a5-9edae3f5e633",
-      "__version": 2,
-      "Flags": 0,
-      "Name": "SpawnPoint (1)",
-      "Position": "-112,48,32",
-      "Rotation": "0,0,0,1",
-      "Scale": "1,1,1",
-      "Tags": "",
-      "Enabled": true,
-      "NetworkMode": 2,
-      "NetworkFlags": 0,
-      "NetworkOrphaned": 0,
-      "NetworkTransmit": true,
-      "OwnerTransfer": 1,
-      "Components": [
-        {
-          "__type": "Sandbox.SpawnPoint",
-          "__guid": "6e5e86ae-4601-4769-bcd8-4c6881f999cb",
-          "__enabled": true,
-          "Flags": 0,
-          "Color": "0.8902,0.31765,0.05098,1",
-          "OnComponentDestroy": null,
-          "OnComponentDisabled": null,
-          "OnComponentEnabled": null,
-          "OnComponentFixedUpdate": null,
-          "OnComponentStart": null,
-          "OnComponentUpdate": null
-        }
-      ],
-      "Children": []
-    },
-    {
-      "__guid": "c7ec889e-f790-41fa-8487-9c635ac6ef23",
-      "__version": 2,
-      "Flags": 0,
-      "Name": "Killbox",
-      "Position": "0,0,-1500",
-      "Rotation": "0,0,0,1",
-      "Scale": "50,50,10",
-      "Tags": "",
-      "Enabled": true,
-      "NetworkMode": 2,
-      "NetworkFlags": 0,
-      "NetworkOrphaned": 0,
-      "NetworkTransmit": true,
-      "OwnerTransfer": 1,
-      "Components": [
-        {
-          "__type": "Sandbox.ModelRenderer",
-          "__guid": "c44205ee-1593-476b-832a-a047da9ef395",
-          "__enabled": true,
-          "Flags": 0,
-          "BodyGroups": 18446744073709551615,
-          "CreateAttachments": false,
-          "LodOverride": null,
-          "MaterialGroup": null,
-          "MaterialOverride": null,
-          "Materials": null,
-          "Model": "models/dev/box.vmdl",
-          "OnComponentDestroy": null,
-          "OnComponentDisabled": null,
-          "OnComponentEnabled": null,
-          "OnComponentFixedUpdate": null,
-          "OnComponentStart": null,
-          "OnComponentUpdate": null,
-          "RenderOptions": {
-            "GameLayer": true,
-            "OverlayLayer": false,
-            "BloomLayer": false,
-            "AfterUILayer": false
-          },
-          "RenderType": "On",
-          "Tint": "0.99535,0.05092,0.05092,0.12"
-        },
         {
           "__type": "Sandbox.BoxCollider",
-          "__guid": "5243564e-e99e-484b-ba1f-0a18aa7d33bc",
+          "__guid": "112e5f6f-0301-47f9-9148-4071c72ccf2c",
           "__enabled": true,
           "Flags": 0,
           "Center": "0,0,0",
@@ -435,16 +296,22 @@
           "OnTriggerEnter": null,
           "OnTriggerExit": null,
           "RollingResistance": null,
-          "Scale": "50,50,50",
+          "Scale": "2000,2000,50",
           "Static": false,
           "Surface": null,
           "SurfaceVelocity": "0,0,0"
         },
         {
           "__type": "KillBox",
-          "__guid": "e7916e65-7bdc-4134-a911-204919bfc3d1",
+          "__guid": "21e1da97-490e-4d6e-819b-7a0079fd0c73",
           "__enabled": true,
           "Flags": 0,
+          "GameManager": {
+            "_type": "component",
+            "component_id": "9c1514bd-02c2-481d-8dab-bf84c8252e59",
+            "go": "f6fe2301-0d3c-46cc-bdc8-0b4ede82ca70",
+            "component_type": "GameManager"
+          },
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
@@ -476,14 +343,14 @@
       "CustomBounds": false
     },
     "GameObjectSystems": {
-      "Sandbox.SelectionSetsSystem": {
-        "Data": {
-          "SelectionSets": []
-        }
-      },
       "Sandbox.Clutter.ClutterGridSystem": {
         "Storage": {
           "$blob": "ce94b569-3a84-48c7-aeca-9e67b25df731"
+        }
+      },
+      "Sandbox.SelectionSetsSystem": {
+        "Data": {
+          "SelectionSets": []
         }
       }
     }
