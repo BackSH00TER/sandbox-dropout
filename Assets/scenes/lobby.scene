@@ -1091,9 +1091,9 @@
       "__version": 2,
       "Flags": 0,
       "Name": "ReadyUpArea",
-      "Position": "160,160,26.2198677",
+      "Position": "160,0,26.2198677",
       "Rotation": "0,0,0,1",
-      "Scale": "3,3,1",
+      "Scale": "3,8.68006039,0.250000715",
       "Tags": "",
       "Enabled": true,
       "NetworkMode": 2,
@@ -1113,7 +1113,7 @@
           "MaterialGroup": null,
           "MaterialOverride": null,
           "Materials": null,
-          "Model": "models/props/pressureplate/pressureplate_button_a.vmdl",
+          "Model": "models/dev/box.vmdl",
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
@@ -1127,14 +1127,14 @@
             "AfterUILayer": false
           },
           "RenderType": "On",
-          "Tint": "1,1,1,1"
+          "Tint": "0.73766,0.95349,0.306,1"
         },
         {
           "__type": "Sandbox.BoxCollider",
           "__guid": "0c10ee2f-5ea7-4c37-b978-675ac89d825a",
           "__enabled": true,
           "Flags": 0,
-          "Center": "-0.117353439,1.26806259,23.0175171",
+          "Center": "-4.61740494,-0.0652389526,23.0175171",
           "ColliderFlags": 0,
           "Elasticity": null,
           "Friction": null,
@@ -1150,7 +1150,7 @@
           "OnTriggerEnter": null,
           "OnTriggerExit": null,
           "RollingResistance": null,
-          "Scale": "32.6379738,35.1553078,46.0350342",
+          "Scale": "41.6380768,49.6098938,46.0350342",
           "Static": false,
           "Surface": null,
           "SurfaceVelocity": "0,0,0"
@@ -1249,7 +1249,7 @@
       "__version": 2,
       "Flags": 0,
       "Name": "LobbyBoard",
-      "Position": "223.405319,-41.9527435,192.570404",
+      "Position": "223.405319,0,192.570404",
       "Rotation": "0,0,0,1",
       "Scale": "1,1,1",
       "Tags": "",
@@ -1402,7 +1402,6 @@
   "Description": null,
   "__references": [
     "exorealms.officewall01#85251",
-    "jammie.pressureplatebuttona#113997",
     "polyhaven.kitchen_wood#33327"
   ],
   "__version": 3
