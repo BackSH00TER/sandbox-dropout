@@ -8,6 +8,18 @@ public sealed class TileManager : Component
 	[Property] public float Padding { get; set; } = 0f;
 	[Property] public bool Centered { get; set; } = true;
 	[Property] public bool TintLayers { get; set; } = true;
+	[Property]
+	public List<Color> LayerColors { get; set; } = new()
+	{
+
+		Color.Parse( "#98E7D7" ) ?? Color.White,
+		Color.Parse( "#FDEF90" ) ?? Color.White,
+		Color.Parse( "#F9A6A6" ) ?? Color.White,
+		Color.Parse( "#B1CBF2" ) ?? Color.White,
+		Color.Parse( "#C2EBBC" ) ?? Color.White,
+		Color.Parse( "#FDFBD5" ) ?? Color.White,
+
+	};
 	public List<Vector3> AvailableSpawnLocations { get; private set; } = new();
 
 	public void BuildGrid()
@@ -38,7 +50,7 @@ public sealed class TileManager : Component
 			// Each layer is parented under its own child GameObject for tidiness in the scene tree.
 			// It must be NetworkSpawn'd so that when we parent network-spawned tiles under it,
 			// clients can resolve the parent reference and the tiles actually appear.
-			var layerTint = TintLayers ? RandomLayerColor() : Color.White;
+			var layerTint = TintLayers ? GetLayerColor( layer ) : Color.White;
 			var layerGameObject = new GameObject( true, $"Layer_{layer}" );
 			layerGameObject.SetParent( GameObject );
 			layerGameObject.LocalPosition = new Vector3( 0f, 0f, -layer * cellZ );
@@ -72,11 +84,10 @@ public sealed class TileManager : Component
 		}
 	}
 
-	private static Color RandomLayerColor()
+	private Color GetLayerColor( int layer )
 	{
-		// Pick a vivid color by randomizing hue while keeping saturation/value high.
-		float hue = Game.Random.Float( 0f, 360f );
-		return new ColorHsv( hue, 0.6f, 1f ).ToColor();
+		if ( LayerColors == null || LayerColors.Count == 0 ) return Color.White;
+		return LayerColors[layer % LayerColors.Count];
 	}
 
 	private GameObject SpawnTile( Vector3 localPos, string name, GameObject parent )
