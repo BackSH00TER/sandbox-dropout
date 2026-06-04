@@ -1,5 +1,3 @@
-using Sandbox;
-
 /// <summary>
 /// Per-player lobby ready state. Holds the networked <see cref="IsReady"/>
 /// bool that <see cref="LobbyReadyUp"/> flips when the player enters/exits

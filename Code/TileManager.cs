@@ -1,5 +1,3 @@
-using Sandbox;
-
 public sealed class TileManager : Component
 {
 	[Property] public GameObject TilePrefab { get; set; }
@@ -41,10 +39,10 @@ public sealed class TileManager : Component
 			// It must be NetworkSpawn'd so that when we parent network-spawned tiles under it,
 			// clients can resolve the parent reference and the tiles actually appear.
 			var layerTint = TintLayers ? RandomLayerColor() : Color.White;
-			var layerGo = new GameObject( true, $"Layer_{layer}" );
-			layerGo.SetParent( GameObject );
-			layerGo.LocalPosition = new Vector3( 0f, 0f, -layer * cellZ );
-			layerGo.NetworkSpawn();
+			var layerGameObject = new GameObject( true, $"Layer_{layer}" );
+			layerGameObject.SetParent( GameObject );
+			layerGameObject.LocalPosition = new Vector3( 0f, 0f, -layer * cellZ );
+			layerGameObject.NetworkSpawn();
 
 			for ( int x = 0; x < Width; x++ )
 			{
@@ -52,7 +50,7 @@ public sealed class TileManager : Component
 				{
 					var localPos = offset + new Vector3( x * cellX, y * cellY, 0f );
 					AvailableSpawnLocations.Add( localPos );
-					var tile = SpawnTile( localPos, $"Tile_{x}_{y}", parent: layerGo );
+					var tile = SpawnTile( localPos, $"Tile_{x}_{y}", parent: layerGameObject );
 
 					if ( TintLayers )
 					{

@@ -1,5 +1,4 @@
 using System;
-using Sandbox;
 
 public sealed class Tile : Component, Component.ITriggerListener
 {
