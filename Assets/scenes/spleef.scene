@@ -165,7 +165,7 @@
             "go": "6c42ae36-d268-4c7e-8a1e-417fbbd3a858",
             "component_type": "PlayerManager"
           },
-          "SceneToLoad": "scenes/spleef.scene",
+          "SceneToLoadFinish": "scenes/lobby.scene",
           "TileManager": {
             "_type": "component",
             "component_id": "671d0c06-f9f2-44fc-8219-11bd4afba293",
