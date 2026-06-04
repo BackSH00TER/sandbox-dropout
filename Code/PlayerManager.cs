@@ -33,6 +33,17 @@ public sealed class PlayerManager : Component, Component.INetworkListener
 		EnablePlayersInputNetwork();
 	}
 
+	/// <summary>
+	/// Host-only. Removes a player from the game by destroying their networked
+	/// GameObject. The destroy propagates to every client.
+	/// </summary>
+	public void DestroyPlayer( PlayerController player )
+	{
+		if ( !Networking.IsHost ) return;
+		if ( player == null || !player.IsValid() ) return;
+		player.GameObject.Destroy();
+	}
+
 	[Rpc.Broadcast]
 	private void EnablePlayersInputNetwork()
 	{

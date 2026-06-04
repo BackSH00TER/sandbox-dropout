@@ -14,69 +14,17 @@
         <div class="spectator">
             <div class="spectator-target">Spectating: @(spectatingName ?? "...")</div>
             <div class="spectator-hints">
-                <span class="hint"><kbd>LMB</kbd> Prev</span>
-                <span class="hint"><kbd>RMB</kbd> Next</span>
+                <span class="hint hint-prev">
+                    Prev
+                    <Image class="glyph" Texture=@Input.GetGlyph("Attack1", InputGlyphSize.Medium, GlyphStyle.Light) />
+                </span>
+                <span class="hint hint-next">
+                    <Image class="glyph" Texture=@Input.GetGlyph("Attack2", InputGlyphSize.Medium, GlyphStyle.Light) /> Next
+                </span>
             </div>
         </div>
     }
 </root>
-
-<style>
-    .countdown {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-family: Poppins;
-        font-size: 128px;
-        font-weight: 900;
-        color: white;
-        text-shadow: 0px 4px 20px rgba(0, 0, 0, 0.8);
-    }
-
-    .spectator {
-        position: absolute;
-        bottom: 48px;
-        left: 0;
-        right: 0;
-        flex-direction: column;
-        align-items: center;
-        font-family: Poppins;
-        color: white;
-        text-shadow: 0px 2px 12px rgba(0, 0, 0, 0.8);
-    }
-
-    .spectator-target {
-        font-size: 28px;
-        font-weight: 700;
-        margin-bottom: 8px;
-    }
-
-    .spectator-hints {
-        flex-direction: row;
-        align-items: center;
-    }
-
-    .hint {
-        font-size: 18px;
-        font-weight: 500;
-        margin: 0 12px;
-        align-items: center;
-    }
-
-    .hint kbd {
-        background: rgba(0, 0, 0, 0.55);
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        border-radius: 4px;
-        padding: 2px 8px;
-        margin-right: 6px;
-        font-weight: 700;
-    }
-</style>
 
 @code {
     [Property] public GameManager GameManager { get; set; }
@@ -90,12 +38,11 @@
     {
         countdownText = gameStartTimer > 0 ? $"Game starts in {(int)gameStartTimer} seconds" : null;
 
-        var localSpectator = Scene.GetAllComponents<Spectator>()
-            .FirstOrDefault(s => s.Network.IsOwner);
-
-        isSpectating = localSpectator != null && localSpectator.IsActive;
-        spectatingName = isSpectating ? localSpectator.SpectatingName : null;
+        var spectator = SpectatorMode.Current;
+        isSpectating = spectator != null && spectator.IsActive;
+        spectatingName = isSpectating ? spectator.SpectatingName : null;
     }
 
-    protected override int BuildHash() => System.HashCode.Combine(countdownText, isSpectating, spectatingName);
+    protected override int BuildHash() => System.HashCode.Combine(countdownText, isSpectating, spectatingName,
+Input.UsingController);
 }

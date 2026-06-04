@@ -17,9 +17,6 @@ public sealed class GameManager : Component
 
 	public static GameManager Current { get; private set; }
 
-	private int _alivePlayerCount = 0;
-	private readonly HashSet<Guid> _eliminatedIds = new();
-
 	protected override void OnEnabled()
 	{
 		Current = this;
@@ -37,7 +34,6 @@ public sealed class GameManager : Component
 
 		TileManager.BuildGrid();
 		PlayerManager.SpawnPlayers();
-		_alivePlayerCount = Scene.GetAllComponents<PlayerController>().Count();
 		CountdownActive = true;
 	}
 
@@ -67,45 +63,44 @@ public sealed class GameManager : Component
 		PlayerManager.EnablePlayersInput();
 	}
 
-	public bool IsPlayerEliminated( GameObject playerGameObject )
-	{
-		return playerGameObject != null && _eliminatedIds.Contains( playerGameObject.Id );
-	}
-
 	public void PlayerEliminated( PlayerController player )
 	{
 		if ( !Networking.IsHost ) return;
 		if ( player == null || !player.IsValid() ) return;
-		if ( _eliminatedIds.Contains( player.GameObject.Id ) ) return;
 
-		_alivePlayerCount--;
 		var name = player.Network?.Owner?.DisplayName ?? player.GameObject.Name;
-		Log.Info( $"Player '{name}' eliminated. Players remaining: {_alivePlayerCount}" );
 
+		// Destroy hasn't propagated yet, so filter out the eliminated player explicitly.
+		var remaining = Scene.GetAllComponents<PlayerController>()
+			.Where( p => p.IsValid() && p != player )
+			.ToList();
+
+		Log.Info( $"Player '{name}' eliminated. Players remaining: {remaining.Count}" );
+
+		// Notify clients first — the eliminated player's owning client needs its
+		// GameObject to still exist when SpectatorMode activates so the local check
+		// against Network.IsOwner resolves correctly.
 		BroadcastPlayerEliminated( player.GameObject );
 
-		if ( _alivePlayerCount <= 1 )
+		PlayerManager.DestroyPlayer( player );
+
+		if ( remaining.Count <= 1 )
 		{
-			var winner = Scene.GetAllComponents<PlayerController>()
-				.FirstOrDefault( pc => pc.IsValid() && !_eliminatedIds.Contains( pc.GameObject.Id ) );
-			var winnerName = winner?.Network?.Owner?.DisplayName ?? "Unknown";
+			var winnerName = remaining.FirstOrDefault()?.Network?.Owner?.DisplayName ?? "Unknown";
 			Log.Info( $"{winnerName} won!" );
 			FinishGame();
 		}
 	}
 
-	// Fanned out from the host to every client when a player is eliminated. Records the
-	// player's id locally (so IsPlayerEliminated agrees on every machine) and activates
-	// the player's Spectator component, which hides the body, disables controls, and —
-	// for the owning client only — switches the camera into spectate mode.
+	// Fanned out from the host. The owning client of the eliminated player flips its
+	// local SpectatorMode on; everyone else just sees the player's GameObject get destroyed.
 	[Rpc.Broadcast]
 	private void BroadcastPlayerEliminated( GameObject playerGameObject )
 	{
 		if ( playerGameObject == null ) return;
-		_eliminatedIds.Add( playerGameObject.Id );
+		if ( !playerGameObject.Network.IsOwner ) return;
 
-		var spectator = playerGameObject.GetComponent<Spectator>();
-		spectator?.Activate();
+		SpectatorMode.Current?.Activate();
 	}
 
 	private void FinishGame()
