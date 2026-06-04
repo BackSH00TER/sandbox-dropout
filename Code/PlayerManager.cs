@@ -1,5 +1,3 @@
-using Sandbox;
-
 public sealed class PlayerManager : Component, Component.INetworkListener
 {
 	[Property] public GameObject PlayerPrefab { get; set; }

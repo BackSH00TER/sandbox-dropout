@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Sandbox;
-
 public sealed class GameManager : Component
 {
 	[Property] TileManager TileManager { get; set; }

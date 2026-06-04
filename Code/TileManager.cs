@@ -1,5 +1,3 @@
-using Sandbox;
-
 public sealed class TileManager : Component
 {
 	[Property] public GameObject TilePrefab { get; set; }

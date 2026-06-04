@@ -1,5 +1,3 @@
-using Sandbox;
-
 public sealed class KillBox : Component, Component.ITriggerListener
 {
     [Property] public GameManager GameManager { get; set; }

@@ -1,5 +1,3 @@
-using Sandbox;
-
 /// <summary>
 /// Trigger listener for the lobby ready-up zone. Flips the networked
 /// <see cref="PlayerReadyState.IsReady"/> on the player that entered/exited.
