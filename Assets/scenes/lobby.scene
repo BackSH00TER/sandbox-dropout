@@ -90,7 +90,6 @@
           "__enabled": true,
           "Flags": 0,
           "GameScene": "scenes/spleef.scene",
-          "LaunchSeconds": 3,
           "MinPlayers": 1,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
@@ -1218,7 +1217,7 @@
       "__version": 2,
       "Flags": 0,
       "Name": "SpawnPoint",
-      "Position": "-64,0,32",
+      "Position": "-64,0,217.256256",
       "Rotation": "0,0,0,1",
       "Scale": "1,1,1",
       "Tags": "",
@@ -1386,14 +1385,14 @@
       "CustomBounds": false
     },
     "GameObjectSystems": {
-      "Sandbox.Clutter.ClutterGridSystem": {
-        "Storage": {
-          "$blob": "e3ddc153-abca-4966-960d-83910fa81065"
-        }
-      },
       "Sandbox.SelectionSetsSystem": {
         "Data": {
           "SelectionSets": []
+        }
+      },
+      "Sandbox.Clutter.ClutterGridSystem": {
+        "Storage": {
+          "$blob": "e3ddc153-abca-4966-960d-83910fa81065"
         }
       }
     }
