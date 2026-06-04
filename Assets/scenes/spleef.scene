@@ -153,6 +153,7 @@
           "__guid": "9c1514bd-02c2-481d-8dab-bf84c8252e59",
           "__enabled": true,
           "Flags": 0,
+          "Debug_DisableGridPhysics": true,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
@@ -343,14 +344,14 @@
       "CustomBounds": false
     },
     "GameObjectSystems": {
-      "Sandbox.Clutter.ClutterGridSystem": {
-        "Storage": {
-          "$blob": "ce94b569-3a84-48c7-aeca-9e67b25df731"
-        }
-      },
       "Sandbox.SelectionSetsSystem": {
         "Data": {
           "SelectionSets": []
+        }
+      },
+      "Sandbox.Clutter.ClutterGridSystem": {
+        "Storage": {
+          "$blob": "ce94b569-3a84-48c7-aeca-9e67b25df731"
         }
       }
     }
