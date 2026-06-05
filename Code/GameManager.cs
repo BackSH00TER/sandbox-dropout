@@ -10,6 +10,15 @@ public sealed class GameManager : Component
 	public bool CountdownActive { get; private set; } = false;
 	public bool GameInProgress { get; private set; } = false;
 
+	// Results phase: shown after a winner is decided, before the scene swaps back to the lobby.
+	public const float ResultsDuration = 7f;
+	[Sync] public bool IsShowingResults { get; private set; } = false;
+	[Sync] public GameObject Winner { get; private set; }
+	[Sync] public TimeUntil ResultsTimer { get; private set; }
+
+	// Host-only guard so we only kick off the scene change once.
+	private bool _hasFinishedResults = false;
+
 	public static GameManager Current { get; private set; }
 
 	protected override void OnEnabled()
@@ -46,6 +55,12 @@ public sealed class GameManager : Component
 				PlayerManager.EnablePlayersInput();
 			}
 		}
+
+		if ( IsShowingResults && !_hasFinishedResults && ResultsTimer <= 0f )
+		{
+			_hasFinishedResults = true;
+			FinishGame();
+		}
 	}
 
 	public void StartGame()
@@ -81,10 +96,147 @@ public sealed class GameManager : Component
 
 		if ( remaining.Count <= 1 )
 		{
-			var winnerName = remaining.FirstOrDefault()?.Network?.Owner?.DisplayName ?? "Unknown";
-			Log.Info( $"{winnerName} won!" );
-			FinishGame();
+			BeginResults( remaining.FirstOrDefault() );
 		}
+	}
+
+	/// <summary>
+	/// Host-only. Enter the post-game results phase: declare the winner, freeze the game,
+	/// set up the podium tile, and start the timer that eventually swaps back to the lobby scene.
+	/// </summary>
+	private void BeginResults( PlayerController winner )
+	{
+		if ( !Networking.IsHost ) return;
+		if ( IsShowingResults ) return;
+
+		GameInProgress = false;
+
+		var winnerGameObject = winner.IsValid() ? winner.GameObject : null;
+
+		if ( winnerGameObject.IsValid() )
+		{
+			SetupPodium( winner );
+			BroadcastFreezeWinner( winnerGameObject );
+		}
+
+		BroadcastResultsBegin( winnerGameObject );
+
+		var winnerName = winner?.Network?.Owner?.DisplayName ?? "Unknown";
+		Log.Info( $"{winnerName} won! Showing results for {ResultsDuration}s." );
+	}
+
+	// Find the tile the winner is standing on and convert it into a golden podium. If they
+	// were mid-air, spawn a fresh podium tile above the arena center and teleport them onto it.
+	private void SetupPodium( PlayerController winner )
+	{
+		var winnerPos = winner.WorldPosition;
+		// Start well above the player so we're clearly outside their body capsule, trace down
+		// past their feet. Ignore both the player root and the separate ColliderObject — the
+		// "Colliders" child isn't tagged "player", so WithoutTags alone won't exclude it.
+		var trace = Scene.Trace.Ray( winnerPos + Vector3.Up * 200f, winnerPos + Vector3.Down * 60f )
+			.WithoutTags( "player" )
+			.IgnoreGameObjectHierarchy( winner.GameObject );
+		if ( winner.ColliderObject.IsValid() )
+			trace = trace.IgnoreGameObjectHierarchy( winner.ColliderObject );
+		var result = trace.Run();
+
+		GameObject podiumGameObject = null;
+		if ( result.Hit && result.GameObject.IsValid() )
+		{
+			// result.GameObject is the TileModelCollider; one level up is the tile prefab root,
+			// which contains the Tile component on a sibling child. Don't use .Root — that walks
+			// all the way up to the scene-level TileManager and would tint the whole arena.
+			var tileRoot = result.GameObject.Parent;
+			var existingTile = tileRoot?.GetComponentInChildren<Tile>();
+			if ( existingTile != null )
+			{
+				podiumGameObject = tileRoot;
+			}
+		}
+
+		if ( podiumGameObject == null )
+		{
+			// Mid-air winner: spawn a podium tile above the arena center and warp the winner onto it.
+			podiumGameObject = SpawnPodiumGameObject();
+			if ( podiumGameObject == null )
+			{
+				Log.Warning( "[Results] Could not produce a podium tile for mid-air winner." );
+				return;
+			}
+			BroadcastTeleportWinner( winner.GameObject, podiumGameObject.WorldPosition + Vector3.Up * 8f );
+		}
+
+		BroadcastConvertToPodium( podiumGameObject );
+	}
+
+	private GameObject SpawnPodiumGameObject()
+	{
+		if ( TileManager == null || !TileManager.TilePrefab.IsValid() ) return null;
+
+		// Raise the podium above the top layer so it doesn't z-fight with the existing center tile.
+		var spawnPos = TileManager.WorldPosition + Vector3.Up * 96f;
+		var tileGameObject = TileManager.TilePrefab.Clone( new CloneConfig
+		{
+			Parent = TileManager.GameObject,
+			StartEnabled = true,
+			Transform = new Transform( spawnPos )
+		} );
+		tileGameObject.Name = "Tile_Podium";
+		tileGameObject.NetworkSpawn();
+		return tileGameObject;
+	}
+
+	// Fanned out so every client locally disables the regular Tile behavior on this GameObject
+	// and swaps in a PodiumTile component (which tints it gold + resets any in-progress wobble).
+	[Rpc.Broadcast]
+	private void BroadcastConvertToPodium( GameObject tileGameObject )
+	{
+		if ( !tileGameObject.IsValid() ) return;
+
+		// Tile lives on a child of the prefab root, so search downward.
+		var tile = tileGameObject.GetComponentInChildren<Tile>();
+		if ( tile != null )
+		{
+			tile.SetTriggerEnabled( false );
+			tile.Enabled = false;
+		}
+
+		if ( tileGameObject.GetComponent<PodiumTile>() == null )
+		{
+			tileGameObject.AddComponent<PodiumTile>();
+		}
+	}
+
+	// Fanned out so every client sets the winner's local PlayerController flags. Matches the
+	// pattern used by PlayerManager.EnablePlayersInput.
+	[Rpc.Broadcast]
+	private void BroadcastFreezeWinner( GameObject winnerGameObject )
+	{
+		if ( !winnerGameObject.IsValid() ) return;
+		var pc = winnerGameObject.GetComponent<PlayerController>();
+		if ( pc == null ) return;
+		pc.UseInputControls = false;
+		pc.UseCameraControls = false;
+	}
+
+	// Only the owning client actually moves the transform — it owns the player's authority.
+	[Rpc.Broadcast]
+	private void BroadcastTeleportWinner( GameObject winnerGameObject, Vector3 position )
+	{
+		if ( !winnerGameObject.IsValid() ) return;
+		if ( !winnerGameObject.Network.IsOwner ) return;
+		winnerGameObject.WorldPosition = position;
+	}
+
+	// Fanned out from the host so every client (including host) sets the same local results
+	// state and starts its own timer. Plain RPC instead of [Sync] because [Sync] props on this
+	// scene-level component don't propagate to non-host clients in this project's setup.
+	[Rpc.Broadcast]
+	private void BroadcastResultsBegin( GameObject winnerGameObject )
+	{
+		IsShowingResults = true;
+		Winner = winnerGameObject;
+		ResultsTimer = ResultsDuration;
 	}
 
 	// Fanned out from the host. The owning client of the eliminated player flips its

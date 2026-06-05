@@ -62,4 +62,41 @@ SpleefHud {
             }
         }
     }
+
+    .results {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-family: Poppins;
+        color: white;
+        text-shadow: 0px 6px 24px rgba(#000, 0.85);
+        pointer-events: none;
+
+        .results-name {
+            font-size: 88px;
+            font-weight: 800;
+            color: #FFD700;
+            letter-spacing: 2px;
+        }
+
+        .results-wins {
+            font-size: 168px;
+            font-weight: 900;
+            line-height: 1;
+            margin-top: -8px;
+            letter-spacing: 6px;
+        }
+
+        .results-countdown {
+            margin-top: 32px;
+            font-size: 26px;
+            font-weight: 500;
+            opacity: 0.85;
+        }
+    }
 }

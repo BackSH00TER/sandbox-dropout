@@ -22,6 +22,15 @@
             </div>
         </div>
     }
+
+    @if (isShowingResults)
+    {
+        <div class="results">
+            <div class="results-name">@(winnerName ?? "...")</div>
+            <div class="results-wins">WINS!</div>
+            <div class="results-countdown">Returning to lobby in @resultsSecondsRemaining…</div>
+        </div>
+    }
 </root>
 
 @code {
@@ -31,16 +40,35 @@
     private string countdownText;
     private bool isSpectating;
     private string spectatingName;
+    private bool isShowingResults;
+    private string winnerName;
+    private int resultsSecondsRemaining;
 
     protected override void OnUpdate()
     {
         countdownText = gameStartTimer > 0 ? $"Game starts in {(int)gameStartTimer} seconds" : null;
 
+        isShowingResults = GameManager?.IsShowingResults ?? false;
+
+        if (isShowingResults)
+        {
+            var winnerGameObject = GameManager.Winner;
+            winnerName = winnerGameObject.IsValid()
+                ? winnerGameObject.Network?.Owner?.DisplayName ?? "Winner"
+                : "Nobody";
+            resultsSecondsRemaining = System.Math.Max(0, (int)System.Math.Ceiling((float)GameManager.ResultsTimer));
+        }
+        else
+        {
+            winnerName = null;
+            resultsSecondsRemaining = 0;
+        }
+
         var spectator = SpectatorMode.Current;
-        isSpectating = spectator != null && spectator.IsActive;
+        isSpectating = !isShowingResults && spectator != null && spectator.IsActive;
         spectatingName = isSpectating ? spectator.SpectatingName : null;
     }
 
     protected override int BuildHash() => System.HashCode.Combine(countdownText, isSpectating, spectatingName,
-Input.UsingController);
+        isShowingResults, winnerName, resultsSecondsRemaining, Input.UsingController);
 }

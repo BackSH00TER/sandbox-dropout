@@ -1,14 +1,12 @@
 using System;
 
 /// <summary>
-/// Scene-level spectator camera. Lives on the main camera GameObject. When
-/// activated for this client (because the local player was removed from the
-/// game), it takes over the camera transform and cycles between the remaining
-/// players with LMB / RMB.
-///
-/// Activation is driven externally — <see cref="GameManager"/> broadcasts a
-/// player-eliminated event and calls <see cref="Activate"/> on the local client
-/// whose player was removed.
+/// Scene-level spectator camera. Lives on the main camera GameObject. Two modes:
+///   * Spectator — entered via <see cref="Activate"/> when the local player is eliminated.
+///     Free orbit driven by mouse look, LMB/RMB cycles between remaining players.
+///   * Winner focus — entered automatically on every client when
+///     <see cref="GameManager.IsShowingResults"/> is true. No input: slow auto yaw drift
+///     and a gentle dolly-in over the results duration. Overrides Spectator while active.
 /// </summary>
 public sealed class SpectatorMode : Component
 {
@@ -17,6 +15,9 @@ public sealed class SpectatorMode : Component
 
     /// <summary>True once the local client has entered spectate mode.</summary>
     public bool IsActive { get; private set; }
+
+    /// <summary>True while the winner-focus cam is driving the camera (during the results phase).</summary>
+    public bool IsFocusingWinner { get; private set; }
 
     /// <summary>Display name of the player currently being spectated, or null.</summary>
     public string SpectatingName => _spectatedPlayer.IsValid() ? _spectatedPlayer.Network?.Owner?.DisplayName ?? "Unknown" : null;
@@ -30,6 +31,19 @@ public sealed class SpectatorMode : Component
     private const float OrbitHeight = 90f;
     private const float MinPitch = -80f;
     private const float MaxPitch = 80f;
+
+    // Winner-focus cam tuning. Yaw drifts at a constant rate; distance + height lerp
+    // from the "start" values to the "end" values across the full results duration
+    // for a subtle dolly-in.
+    private const float WinnerYawSpeed = 14f;          // degrees / second
+    private const float WinnerPitch = 18f;
+    private const float WinnerDistanceStart = OrbitDistance * 1.25f;
+    private const float WinnerDistanceEnd = OrbitDistance * 0.80f;
+    private const float WinnerHeightStart = OrbitHeight * 1.30f;
+    private const float WinnerHeightEnd = OrbitHeight * 0.90f;
+
+    private float _winnerYaw;
+    private bool _hasCapturedWinnerYaw;
 
     protected override void OnEnabled()
     {
@@ -60,6 +74,19 @@ public sealed class SpectatorMode : Component
 
     protected override void OnUpdate()
     {
+        // Winner-focus mode overrides everything else while the results phase is up.
+        var gameManager = GameManager.Current;
+        var winner = (gameManager != null && gameManager.IsShowingResults) ? gameManager.Winner : null;
+
+        if ( winner.IsValid() )
+        {
+            IsFocusingWinner = true;
+            UpdateWinnerFocus( winner );
+            return;
+        }
+        IsFocusingWinner = false;
+        _hasCapturedWinnerYaw = false;
+
         if ( !IsActive ) return;
 
         var targets = GetAvailableTargets();
@@ -114,6 +141,38 @@ public sealed class SpectatorMode : Component
         var orbitRotation = _orbitAngles.ToRotation();
         // Sit OrbitDistance units behind the orbit's forward direction, then lift by OrbitHeight for a slight top-down angle.
         var camPos = lookAt + orbitRotation.Forward * -OrbitDistance + Vector3.Up * OrbitHeight;
+
+        camera.WorldPosition = camPos;
+        camera.WorldRotation = Rotation.LookAt( (lookAt - camPos).Normal );
+    }
+
+    private void UpdateWinnerFocus( GameObject winner )
+    {
+        var camera = Scene.Camera;
+        if ( !camera.IsValid() ) return;
+
+        // First frame in winner-focus: seed yaw from the camera's current direction so the
+        // cut isn't jarring (especially for the winner whose view was first-person).
+        if ( !_hasCapturedWinnerYaw )
+        {
+            _hasCapturedWinnerYaw = true;
+            var toWinner = (winner.WorldPosition - camera.WorldPosition).WithZ( 0f );
+            _winnerYaw = toWinner.LengthSquared > 0.001f
+                ? Rotation.LookAt( toWinner.Normal ).Yaw()
+                : camera.WorldRotation.Yaw();
+        }
+
+        _winnerYaw += WinnerYawSpeed * Time.Delta;
+
+        // Dolly-in: lerp distance + height across the results window using the synced timer.
+        var remaining = (float)GameManager.Current.ResultsTimer;
+        var t = Math.Clamp( 1f - (remaining / GameManager.ResultsDuration), 0f, 1f );
+        var distance = MathX.Lerp( WinnerDistanceStart, WinnerDistanceEnd, t );
+        var height = MathX.Lerp( WinnerHeightStart, WinnerHeightEnd, t );
+
+        var rotation = new Angles( WinnerPitch, _winnerYaw, 0f ).ToRotation();
+        var lookAt = winner.WorldPosition + Vector3.Up * 60f;
+        var camPos = lookAt + rotation.Forward * -distance + Vector3.Up * height;
 
         camera.WorldPosition = camPos;
         camera.WorldRotation = Rotation.LookAt( (lookAt - camPos).Normal );
