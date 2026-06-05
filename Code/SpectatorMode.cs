@@ -32,17 +32,20 @@ public sealed class SpectatorMode : Component
     private const float MinPitch = -80f;
     private const float MaxPitch = 80f;
 
-    // Winner-focus cam tuning. Yaw drifts at a constant rate; distance + height lerp
-    // from the "start" values to the "end" values across the full results duration
+    // Winner-focus cam tuning. Camera starts directly in front of the winner (looking
+    // at their face) and slowly sways side-to-side via a sine wave for a cinematic feel.
+    // Distance + height lerp from "start" to "end" across the full results duration
     // for a subtle dolly-in.
-    private const float WinnerYawSpeed = 14f;          // degrees / second
-    private const float WinnerPitch = 18f;
-    private const float WinnerDistanceStart = OrbitDistance * 1.25f;
-    private const float WinnerDistanceEnd = OrbitDistance * 0.80f;
-    private const float WinnerHeightStart = OrbitHeight * 1.30f;
-    private const float WinnerHeightEnd = OrbitHeight * 0.90f;
+    private const float WinnerPitch = 5f;
+    private const float WinnerDistanceStart = 140f;
+    private const float WinnerDistanceEnd = 110f;
+    private const float WinnerHeightStart = 50f;
+    private const float WinnerHeightEnd = 30f;
+    private const float WinnerSwayAmplitude = 45f;  // degrees off-center each direction
+    private const float WinnerSwayPeriod = 8f;      // seconds for one full left-right-back cycle
 
-    private float _winnerYaw;
+    private float _winnerBaseYaw;
+    private float _winnerStartTime;
     private bool _hasCapturedWinnerYaw;
 
     protected override void OnEnabled()
@@ -151,18 +154,19 @@ public sealed class SpectatorMode : Component
         var camera = Scene.Camera;
         if ( !camera.IsValid() ) return;
 
-        // First frame in winner-focus: seed yaw from the camera's current direction so the
-        // cut isn't jarring (especially for the winner whose view was first-person).
+        // First frame in winner-focus: seed yaw from the winner's facing direction so the
+        // camera starts directly in front of them, looking at their face. Also reset the
+        // sway clock so the sine wave begins centered (sin(0) = 0).
         if ( !_hasCapturedWinnerYaw )
         {
             _hasCapturedWinnerYaw = true;
-            var toWinner = (winner.WorldPosition - camera.WorldPosition).WithZ( 0f );
-            _winnerYaw = toWinner.LengthSquared > 0.001f
-                ? Rotation.LookAt( toWinner.Normal ).Yaw()
-                : camera.WorldRotation.Yaw();
+            _winnerBaseYaw = winner.WorldRotation.Yaw() + 180f;
+            _winnerStartTime = Time.Now;
         }
 
-        _winnerYaw += WinnerYawSpeed * Time.Delta;
+        float elapsed = Time.Now - _winnerStartTime;
+        float swayPhase = (elapsed / WinnerSwayPeriod) * MathF.PI * 2f;
+        float yaw = _winnerBaseYaw + MathF.Sin( swayPhase ) * WinnerSwayAmplitude;
 
         // Dolly-in: lerp distance + height across the results window using the synced timer.
         var remaining = (float)GameManager.Current.ResultsTimer;
@@ -170,7 +174,7 @@ public sealed class SpectatorMode : Component
         var distance = MathX.Lerp( WinnerDistanceStart, WinnerDistanceEnd, t );
         var height = MathX.Lerp( WinnerHeightStart, WinnerHeightEnd, t );
 
-        var rotation = new Angles( WinnerPitch, _winnerYaw, 0f ).ToRotation();
+        var rotation = new Angles( WinnerPitch, yaw, 0f ).ToRotation();
         var lookAt = winner.WorldPosition + Vector3.Up * 60f;
         var camPos = lookAt + rotation.Forward * -distance + Vector3.Up * height;
 

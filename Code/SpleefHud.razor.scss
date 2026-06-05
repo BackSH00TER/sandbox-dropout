@@ -69,33 +69,50 @@ SpleefHud {
         left: 0;
         right: 0;
         bottom: 0;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        font-family: Poppins;
-        color: white;
-        text-shadow: 0px 6px 24px rgba(#000, 0.85);
         pointer-events: none;
 
         .results-name {
-            font-size: 88px;
-            font-weight: 800;
+            position: absolute;
+            top: 48px;
+            left: 0;
+            right: 0;
+            flex-direction: row;
+            justify-content: center;
+            font-family: Poppins;
+            font-size: 144px;
+            font-weight: 900;
             color: #FFD700;
-            letter-spacing: 2px;
+            letter-spacing: 6px;
+            text-shadow: 0px 6px 24px rgba(#000, 0.85);
         }
 
         .results-wins {
-            font-size: 168px;
+            position: absolute;
+            bottom: 96px;
+            left: 0;
+            right: 0;
+            flex-direction: row;
+            justify-content: center;
+            font-family: Poppins;
+            font-size: 96px;
             font-weight: 900;
-            line-height: 1;
-            margin-top: -8px;
-            letter-spacing: 6px;
+            color: white;
+            letter-spacing: 8px;
+            text-shadow: 0px 6px 24px rgba(#000, 0.85);
         }
 
         .results-countdown {
-            margin-top: 32px;
-            font-size: 26px;
+            position: absolute;
+            bottom: 48px;
+            left: 0;
+            right: 0;
+            flex-direction: row;
+            justify-content: center;
+            font-family: Poppins;
+            font-size: 24px;
             font-weight: 500;
+            color: white;
+            text-shadow: 0px 2px 12px rgba(#000, 0.8);
             opacity: 0.85;
         }
     }

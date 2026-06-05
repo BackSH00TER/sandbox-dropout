@@ -25,6 +25,16 @@ public sealed class GameManager : Component
 	// Host-only: tiles queued to drop during results, sorted outward from the podium.
 	private readonly List<(Tile tile, TimeUntil at)> _disintegrationSchedule = new();
 
+	// Per-client: drives the winner's celebratory hops during results. Only the client that
+	// owns the winner GameObject actually animates the transform; everyone else watches via
+	// network transform sync.
+	private const float WinnerHopHeight = 40f;
+	private const float WinnerHopPeriod = 0.55f;  // seconds per up-and-back-down cycle
+	private float _winnerHopStartTime;
+	private Vector3 _winnerHopGroundPosition;
+	private bool _hasCapturedHopGround;
+	private bool _wasShowingResults;
+
 	public static GameManager Current { get; private set; }
 
 	protected override void OnEnabled()
@@ -49,6 +59,9 @@ public sealed class GameManager : Component
 
 	protected override void OnFixedUpdate()
 	{
+		// Per-client: drive the winner's hops regardless of host status.
+		TickWinnerHop();
+
 		if ( !Networking.IsHost ) return;
 
 		if ( CountdownActive )
@@ -225,6 +238,41 @@ public sealed class GameManager : Component
 		}
 	}
 
+	// Runs on every client. Resets the hop timer when results begin, then on the
+	// owning client only, applies an upward impulse to the winner at a fixed interval.
+	// Runs on every client. Resets state when results begin, then on the owning client
+	// drives the winner's transform up-and-down with an abs(sin) wave for a continuous hop.
+	private void TickWinnerHop()
+	{
+		if ( !IsShowingResults || !Winner.IsValid() )
+		{
+			_wasShowingResults = false;
+			_hasCapturedHopGround = false;
+			return;
+		}
+
+		if ( !_wasShowingResults )
+		{
+			_wasShowingResults = true;
+			_winnerHopStartTime = Time.Now;
+		}
+
+		if ( !Winner.Network.IsOwner ) return;
+
+		// Capture the ground position once on the owner client, after the freeze + teleport
+		// have resolved, so the hop returns to the same spot every cycle.
+		if ( !_hasCapturedHopGround )
+		{
+			_hasCapturedHopGround = true;
+			_winnerHopGroundPosition = Winner.WorldPosition;
+		}
+
+		float elapsed = Time.Now - _winnerHopStartTime;
+		float phase = (elapsed / WinnerHopPeriod) * (float)System.Math.PI;
+		float z = System.Math.Abs( (float)System.Math.Sin( phase ) ) * WinnerHopHeight;
+		Winner.WorldPosition = _winnerHopGroundPosition + Vector3.Up * z;
+	}
+
 	private void TickDisintegration()
 	{
 		if ( _disintegrationSchedule.Count == 0 ) return;
@@ -296,6 +344,12 @@ public sealed class GameManager : Component
 		// Clear any held input — otherwise the last WishVelocity (e.g. W still pressed)
 		// keeps driving the controller forward after input is disabled.
 		pc.WishVelocity = Vector3.Zero;
+
+		// Disable the controller and freeze rigidbody motion so the winner-hop tick can drive
+		// the transform directly without the move modes or physics overriding our position.
+		pc.Enabled = false;
+		var rb = winnerGameObject.GetComponent<Rigidbody>();
+		if ( rb != null ) rb.MotionEnabled = false;
 	}
 
 	// Only the owning client actually moves the transform — it owns the player's authority.
