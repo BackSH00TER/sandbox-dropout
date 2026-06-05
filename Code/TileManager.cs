@@ -66,10 +66,12 @@ public sealed class TileManager : Component
 
 					if ( TintLayers )
 					{
-						foreach ( var renderer in tile.GetComponentsInChildren<ModelRenderer>() )
-						{
-							renderer.Tint = layerTint;
-						}
+						// Push the color through the synced LayerTint property so non-host
+						// clients receive it. Setting renderer.Tint directly would only show
+						// on the host since ModelRenderer.Tint isn't networked.
+						var tileComponent = tile.GetComponentInChildren<Tile>();
+						if ( tileComponent != null )
+							tileComponent.LayerTint = layerTint;
 					}
 				}
 			}
