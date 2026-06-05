@@ -165,7 +165,7 @@
           "__guid": "9c1514bd-02c2-481d-8dab-bf84c8252e59",
           "__enabled": true,
           "Flags": 0,
-          "Debug_DisableGridPhysics": true,
+          "Debug_DisableGridPhysics": false,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
@@ -212,6 +212,14 @@
           "Flags": 0,
           "Centered": true,
           "Depth": 10,
+          "LayerColors": [
+            "0.59608,0.90588,0.84314,1",
+            "0.99216,0.93725,0.56471,1",
+            "0.97647,0.65098,0.65098,1",
+            "0.69412,0.79608,0.94902,1",
+            "0.76078,0.92157,0.73725,1",
+            "0.99216,0.98431,0.83529,1"
+          ],
           "LayerCount": 3,
           "LayerSpacing": 256,
           "OnComponentDestroy": null,

@@ -12,12 +12,18 @@ public sealed class GameManager : Component
 
 	// Results phase: shown after a winner is decided, before the scene swaps back to the lobby.
 	public const float ResultsDuration = 7f;
+	// Drop the arena over the first chunk of the results window, leaving the tail for the
+	// podium to stand alone before the scene swaps.
+	public const float DisintegrationDuration = 5f;
 	[Sync] public bool IsShowingResults { get; private set; } = false;
 	[Sync] public GameObject Winner { get; private set; }
 	[Sync] public TimeUntil ResultsTimer { get; private set; }
 
 	// Host-only guard so we only kick off the scene change once.
 	private bool _hasFinishedResults = false;
+
+	// Host-only: tiles queued to drop during results, sorted outward from the podium.
+	private readonly List<(Tile tile, TimeUntil at)> _disintegrationSchedule = new();
 
 	public static GameManager Current { get; private set; }
 
@@ -56,10 +62,15 @@ public sealed class GameManager : Component
 			}
 		}
 
-		if ( IsShowingResults && !_hasFinishedResults && ResultsTimer <= 0f )
+		if ( IsShowingResults )
 		{
-			_hasFinishedResults = true;
-			FinishGame();
+			TickDisintegration();
+
+			if ( !_hasFinishedResults && ResultsTimer <= 0f )
+			{
+				_hasFinishedResults = true;
+				FinishGame();
+			}
 		}
 	}
 
@@ -113,11 +124,19 @@ public sealed class GameManager : Component
 
 		var winnerGameObject = winner.IsValid() ? winner.GameObject : null;
 
+		GameObject podiumGameObject = null;
 		if ( winnerGameObject.IsValid() )
 		{
-			SetupPodium( winner );
+			podiumGameObject = SetupPodium( winner );
 			BroadcastFreezeWinner( winnerGameObject );
+
+			// Center the winner on the podium tile so a stray last step can't carry them off the edge.
+			// Done after the freeze so there's no input window between snapping and locking inputs.
+			if ( podiumGameObject.IsValid() )
+				BroadcastTeleportWinner( winnerGameObject, podiumGameObject.WorldPosition + Vector3.Up * 8f );
 		}
+
+		ScheduleDisintegration( podiumGameObject );
 
 		BroadcastResultsBegin( winnerGameObject );
 
@@ -127,7 +146,8 @@ public sealed class GameManager : Component
 
 	// Find the tile the winner is standing on and convert it into a golden podium. If they
 	// were mid-air, spawn a fresh podium tile above the arena center and teleport them onto it.
-	private void SetupPodium( PlayerController winner )
+	// Returns the podium tile's prefab root so callers can exclude it from the disintegration wave.
+	private GameObject SetupPodium( PlayerController winner )
 	{
 		var winnerPos = winner.WorldPosition;
 		// Start well above the player so we're clearly outside their body capsule, trace down
@@ -156,17 +176,73 @@ public sealed class GameManager : Component
 
 		if ( podiumGameObject == null )
 		{
-			// Mid-air winner: spawn a podium tile above the arena center and warp the winner onto it.
+			// Mid-air winner: spawn a podium tile above the arena center. The winner is teleported
+			// onto it by BeginResults, not here, so the snap happens after the freeze.
 			podiumGameObject = SpawnPodiumGameObject();
 			if ( podiumGameObject == null )
 			{
 				Log.Warning( "[Results] Could not produce a podium tile for mid-air winner." );
-				return;
+				return null;
 			}
-			BroadcastTeleportWinner( winner.GameObject, podiumGameObject.WorldPosition + Vector3.Up * 8f );
 		}
 
 		BroadcastConvertToPodium( podiumGameObject );
+		return podiumGameObject;
+	}
+
+	// Host-only. Build an outward-from-podium drop schedule for every non-podium tile, spread
+	// across DisintegrationDuration. Tile.BreakTile is host-authoritative and flips a [Sync]
+	// _falling flag, so clients animate the cascade for free.
+	private void ScheduleDisintegration( GameObject podiumGameObject )
+	{
+		_disintegrationSchedule.Clear();
+		if ( TileManager == null ) return;
+
+		var podiumPos = podiumGameObject.IsValid()
+			? podiumGameObject.WorldPosition
+			: TileManager.WorldPosition;
+
+		var candidates = new List<(Tile tile, float distance)>();
+		foreach ( var tile in TileManager.GameObject.GetComponentsInChildren<Tile>() )
+		{
+			if ( !tile.IsValid() ) continue;
+			// Tile lives on a child of the prefab root; comparing parents skips the podium tile.
+			if ( podiumGameObject.IsValid() && tile.GameObject.Parent == podiumGameObject ) continue;
+
+			// Use horizontal distance only so every layer ripples outward together,
+			// instead of cascading top-layer-first to bottom-layer-last.
+			float horizontalDistance = (tile.WorldPosition - podiumPos).WithZ( 0f ).Length;
+			candidates.Add( (tile, horizontalDistance) );
+		}
+
+		candidates.Sort( ( a, b ) => a.distance.CompareTo( b.distance ) );
+
+		for ( int i = 0; i < candidates.Count; i++ )
+		{
+			float t = candidates.Count > 1 ? (float)i / (candidates.Count - 1) : 0f;
+			TimeUntil dropAt = t * DisintegrationDuration;
+			_disintegrationSchedule.Add( (candidates[i].tile, dropAt) );
+		}
+	}
+
+	private void TickDisintegration()
+	{
+		if ( _disintegrationSchedule.Count == 0 ) return;
+
+		for ( int i = _disintegrationSchedule.Count - 1; i >= 0; i-- )
+		{
+			var entry = _disintegrationSchedule[i];
+			if ( !entry.tile.IsValid() )
+			{
+				_disintegrationSchedule.RemoveAt( i );
+				continue;
+			}
+			if ( entry.at <= 0f )
+			{
+				entry.tile.BreakTile();
+				_disintegrationSchedule.RemoveAt( i );
+			}
+		}
 	}
 
 	private GameObject SpawnPodiumGameObject()
@@ -217,6 +293,9 @@ public sealed class GameManager : Component
 		if ( pc == null ) return;
 		pc.UseInputControls = false;
 		pc.UseCameraControls = false;
+		// Clear any held input — otherwise the last WishVelocity (e.g. W still pressed)
+		// keeps driving the controller forward after input is disabled.
+		pc.WishVelocity = Vector3.Zero;
 	}
 
 	// Only the owning client actually moves the transform — it owns the player's authority.
