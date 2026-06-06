@@ -3,6 +3,7 @@ public sealed class GameManager : Component
 	[Property] TileManager TileManager { get; set; }
 	[Property] PlayerManager PlayerManager { get; set; }
 	[Property] public SceneFile SceneToLoadFinish { get; set; }
+	[Property] public GameObject ConfettiPrefab { get; set; }
 
 	[Property, Group( "Debug" )] public bool Debug_DisableGridPhysics { get; set; } = false;
 
@@ -24,6 +25,10 @@ public sealed class GameManager : Component
 
 	// Host-only: tiles queued to drop during results, sorted outward from the podium.
 	private readonly List<(Tile tile, TimeUntil at)> _disintegrationSchedule = new();
+
+	// Confetti bursts queued during results. Populated locally on every client when the
+	// host's BroadcastBeginConfetti RPC arrives, then ticked locally to spawn prefab clones.
+	private readonly List<(TimeUntil at, Vector3 pos, Vector3 dir)> _confettiBurstSchedule = new();
 
 	// Per-client: drives the winner's celebratory hops during results. Only the client that
 	// owns the winner GameObject actually animates the transform; everyone else watches via
@@ -61,6 +66,8 @@ public sealed class GameManager : Component
 	{
 		// Per-client: drive the winner's hops regardless of host status.
 		TickWinnerHop();
+		// Per-client: drive the confetti schedule locally (populated by BroadcastBeginConfetti).
+		TickConfettiBursts();
 
 		if ( !Networking.IsHost ) return;
 
@@ -152,6 +159,18 @@ public sealed class GameManager : Component
 		ScheduleDisintegration( podiumGameObject );
 
 		BroadcastResultsBegin( winnerGameObject );
+
+		// Confetti: fan out via RPC so every client populates its own local burst schedule.
+		// [Sync] doesn't propagate reliably on this scene-singleton GameManager (verified), but
+		// [Rpc.Broadcast] bodies do run on clients (same mechanism BroadcastResultsBegin uses).
+		if ( winnerGameObject.IsValid() && podiumGameObject.IsValid() )
+		{
+			var winnerForward = winnerGameObject.WorldRotation.Forward.WithZ( 0f );
+			if ( winnerForward.LengthSquared > 0.001f )
+			{
+				BroadcastBeginConfetti( podiumGameObject.WorldPosition, winnerForward.Normal );
+			}
+		}
 
 		var winnerName = winner?.Network?.Owner?.DisplayName ?? "Unknown";
 		Log.Info( $"{winnerName} won! Showing results for {ResultsDuration}s." );
@@ -273,6 +292,52 @@ public sealed class GameManager : Component
 		Winner.WorldPosition = _winnerHopGroundPosition + Vector3.Up * z;
 	}
 
+	// Fanned out from the host so every client (including host) populates its own local
+	// confetti schedule from the same pattern. Plain RPC — [Sync] doesn't propagate on this
+	// scene-singleton GameManager (verified). Mirror of the BroadcastResultsBegin pattern.
+	[Rpc.Broadcast]
+	private void BroadcastBeginConfetti( Vector3 podiumPos, Vector3 winnerForward )
+	{
+		_confettiBurstSchedule.Clear();
+
+		if ( winnerForward.LengthSquared < 0.001f ) return;
+		winnerForward = winnerForward.Normal;
+
+		// (delay seconds, yaw offset from "directly behind" in degrees, radius, height)
+		var pattern = new (float delay, float yaw, float radius, float height)[]
+		{
+			( 0.00f,    0f, 70f, 20f ),  // dead behind
+			( 0.60f,  -55f, 80f, 25f ),  // behind-left
+			( 1.20f,   55f, 80f, 25f ),  // behind-right
+			( 2.00f,    0f, 60f, 35f ),  // behind, higher
+			( 2.80f,  -90f, 95f, 15f ),  // hard left flank
+			( 2.80f,   90f, 95f, 15f ),  // hard right flank
+			( 3.80f,    0f, 70f, 20f ),  // final center pop
+		};
+
+		foreach ( var (delay, yaw, radius, height) in pattern )
+		{
+			var offsetDir = Rotation.FromYaw( yaw ) * (-winnerForward);
+			var pos = podiumPos + offsetDir * radius + Vector3.Up * height;
+			_confettiBurstSchedule.Add( (delay, pos, winnerForward) );
+		}
+	}
+
+	private void TickConfettiBursts()
+	{
+		if ( _confettiBurstSchedule.Count == 0 ) return;
+
+		for ( int i = _confettiBurstSchedule.Count - 1; i >= 0; i-- )
+		{
+			var entry = _confettiBurstSchedule[i];
+			if ( entry.at <= 0f )
+			{
+				SpawnConfettiLocally( entry.pos, entry.dir );
+				_confettiBurstSchedule.RemoveAt( i );
+			}
+		}
+	}
+
 	private void TickDisintegration()
 	{
 		if ( _disintegrationSchedule.Count == 0 ) return;
@@ -359,6 +424,38 @@ public sealed class GameManager : Component
 		if ( !winnerGameObject.IsValid() ) return;
 		if ( !winnerGameObject.Network.IsOwner ) return;
 		winnerGameObject.WorldPosition = position;
+	}
+
+	private static readonly Color[] ConfettiColors =
+	{
+		Color.Parse( "#FF5757" ) ?? Color.Red,
+		Color.Parse( "#FFD93D" ) ?? Color.Yellow,
+		Color.Parse( "#6BCB77" ) ?? Color.Green,
+		Color.Parse( "#4D96FF" ) ?? Color.Blue,
+		Color.Parse( "#FF6FFF" ) ?? Color.Magenta,
+		Color.White,
+	};
+
+	private void SpawnConfettiLocally( Vector3 spawnPos, Vector3 launchDirection )
+	{
+		if ( !ConfettiPrefab.IsValid() ) return;
+
+		var dir = launchDirection.LengthSquared > 0.001f ? launchDirection.Normal : Vector3.Forward;
+		var rotation = Rotation.LookAt( dir );
+
+		// One clone per color so each burst contains a mix of colored particles. The clone’s
+		// ParticleSphereEmitter is single-shot (Loop=false, DestroyOnEnd=true) so each cleans itself up.
+		foreach ( var color in ConfettiColors )
+		{
+			var clone = ConfettiPrefab.Clone( new CloneConfig
+			{
+				StartEnabled = true,
+				Transform = new Transform( spawnPos, rotation )
+			} );
+
+			var effect = clone.GetComponent<ParticleEffect>();
+			if ( effect != null ) effect.Tint = color;
+		}
 	}
 
 	// Fanned out from the host so every client (including host) sets the same local results
