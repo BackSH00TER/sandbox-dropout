@@ -35,12 +35,13 @@ public sealed class SpectatorMode : Component
     // Winner-focus cam tuning. Camera starts directly in front of the winner (looking
     // at their face) and slowly sways side-to-side via a sine wave for a cinematic feel.
     // Distance + height lerp from "start" to "end" across the full results duration
-    // for a subtle dolly-in.
-    private const float WinnerPitch = 5f;
+    // for a subtle dolly-in. Height is relative to the lookAt point (winner chest level),
+    // so 0 = straight-on, negative = camera below winner looking up.
+    private const float WinnerPitch = 0f;
     private const float WinnerDistanceStart = 140f;
     private const float WinnerDistanceEnd = 110f;
-    private const float WinnerHeightStart = 50f;
-    private const float WinnerHeightEnd = 30f;
+    private const float WinnerHeightStart = 10f;
+    private const float WinnerHeightEnd = -15f;
     private const float WinnerSwayAmplitude = 45f;  // degrees off-center each direction
     private const float WinnerSwayPeriod = 8f;      // seconds for one full left-right-back cycle
 
@@ -160,7 +161,12 @@ public sealed class SpectatorMode : Component
         if ( !_hasCapturedWinnerYaw )
         {
             _hasCapturedWinnerYaw = true;
-            _winnerBaseYaw = winner.WorldRotation.Yaw() + 180f;
+            // PlayerController is disabled on freeze — pass true to GetComponent so we can
+            // still find it. Renderer is the SkinnedModelRenderer whose GameObject rotation
+            // is the visual facing.
+            var pc = winner.GetComponent<PlayerController>( true );
+            var rendererRotation = (pc?.Renderer.IsValid() == true) ? pc.Renderer.WorldRotation : winner.WorldRotation;
+            _winnerBaseYaw = rendererRotation.Yaw() + 180f;
             _winnerStartTime = Time.Now;
         }
 

@@ -169,7 +169,7 @@
             "_type": "gameobject",
             "prefab": "prefabs/confetti_burst.prefab"
           },
-          "Debug_DisableGridPhysics": true,
+          "Debug_DisableGridPhysics": false,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
