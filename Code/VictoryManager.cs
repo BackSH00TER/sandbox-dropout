@@ -390,6 +390,20 @@ public sealed class VictoryManager : Component
         pc.Enabled = false;
         Rigidbody rb = winnerGameObject.GetComponent<Rigidbody>();
         if ( rb != null ) rb.MotionEnabled = false;
+
+        // PlayerController.OnUpdate is what pumps animation params each frame; once we
+        // disable it, the last "sprinting" values stick and the winner runs in place.
+        // Zero them so the citizen animgraph falls back to idle.
+        SkinnedModelRenderer renderer = pc.Renderer;
+        if ( renderer.IsValid() )
+        {
+            renderer.Set( "move_groundspeed", 0f );
+            renderer.Set( "move_x", 0f );
+            renderer.Set( "move_y", 0f );
+            renderer.Set( "move_z", 0f );
+            renderer.Set( "move_direction", 0f );
+            renderer.Set( "b_grounded", true );
+        }
     }
 
     // Only the owning client actually moves the transform — it owns the player's authority.
