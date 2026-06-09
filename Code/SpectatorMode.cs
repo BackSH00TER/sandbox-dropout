@@ -58,7 +58,7 @@ public sealed class SpectatorMode : Component
     {
         if ( !IsActive ) return;
         // Results phase: hand the camera over to WinnerFocusCam.
-        if ( GameManager.Current?.IsShowingResults == true ) return;
+        if ( VictoryManager.Current?.IsShowingResults == true ) return;
 
         var targets = GetAvailableTargets();
         if ( targets.Count == 0 )

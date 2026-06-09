@@ -35,6 +35,7 @@
 
 @code {
     [Property] public GameManager GameManager { get; set; }
+    [Property] public VictoryManager VictoryManager { get; set; }
 
     private TimeUntil gameStartTimer => GameManager.CountdownTimer;
     private string countdownText;
@@ -48,15 +49,15 @@
     {
         countdownText = gameStartTimer > 0 ? $"Game starts in {(int)gameStartTimer} seconds" : null;
 
-        isShowingResults = GameManager?.IsShowingResults ?? false;
+        isShowingResults = VictoryManager?.IsShowingResults ?? false;
 
         if (isShowingResults)
         {
-            var winnerGameObject = GameManager.Winner;
+            GameObject winnerGameObject = VictoryManager.Winner;
             winnerName = winnerGameObject.IsValid()
                 ? winnerGameObject.Network?.Owner?.DisplayName ?? "Winner"
                 : "Nobody";
-            resultsSecondsRemaining = System.Math.Max(0, (int)System.Math.Ceiling((float)GameManager.ResultsTimer));
+            resultsSecondsRemaining = System.Math.Max(0, (int)System.Math.Ceiling((float)VictoryManager.ResultsTimer));
         }
         else
         {
@@ -64,7 +65,7 @@
             resultsSecondsRemaining = 0;
         }
 
-        var spectator = SpectatorMode.Current;
+        SpectatorMode spectator = SpectatorMode.Current;
         isSpectating = !isShowingResults && spectator != null && spectator.IsActive;
         spectatingName = isSpectating ? spectator.SpectatingName : null;
     }

@@ -146,6 +146,12 @@
             "go": "f6fe2301-0d3c-46cc-bdc8-0b4ede82ca70",
             "component_type": "GameManager"
           },
+          "VictoryManager": {
+            "_type": "component",
+            "component_id": "5d2c1a98-3b4f-4e7c-8d1a-f6b9c0a5e3d2",
+            "go": "f6fe2301-0d3c-46cc-bdc8-0b4ede82ca70",
+            "component_type": "VictoryManager"
+          },
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
@@ -226,10 +232,6 @@
           "__guid": "9c1514bd-02c2-481d-8dab-bf84c8252e59",
           "__enabled": true,
           "Flags": 0,
-          "ConfettiPrefab": {
-            "_type": "gameobject",
-            "prefab": "prefabs/confetti_burst.prefab"
-          },
           "Debug_DisableGridPhysics": false,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
@@ -243,6 +245,34 @@
             "go": "6c42ae36-d268-4c7e-8a1e-417fbbd3a858",
             "component_type": "PlayerManager"
           },
+          "TileManager": {
+            "_type": "component",
+            "component_id": "671d0c06-f9f2-44fc-8219-11bd4afba293",
+            "go": "6aefde79-5015-4ec6-8d5a-438608964588",
+            "component_type": "TileManager"
+          },
+          "VictoryManager": {
+            "_type": "component",
+            "component_id": "5d2c1a98-3b4f-4e7c-8d1a-f6b9c0a5e3d2",
+            "go": "f6fe2301-0d3c-46cc-bdc8-0b4ede82ca70",
+            "component_type": "VictoryManager"
+          }
+        },
+        {
+          "__type": "VictoryManager",
+          "__guid": "5d2c1a98-3b4f-4e7c-8d1a-f6b9c0a5e3d2",
+          "__enabled": true,
+          "Flags": 0,
+          "ConfettiPrefab": {
+            "_type": "gameobject",
+            "prefab": "prefabs/confetti_burst.prefab"
+          },
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
           "SceneToLoadFinish": "scenes/lobby.scene",
           "TileManager": {
             "_type": "component",
