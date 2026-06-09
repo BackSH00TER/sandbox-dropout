@@ -46,14 +46,14 @@
         "CollisionPrefabRotation": 0,
         "CollisionRadius": 1,
         "ConstantMovement": { "X": 0, "Y": 0, "Z": 0 },
-        "Damping": 0.4,
+        "Damping": 0.35,
         "DieOnCollisionChance": 0,
         "FollowerPrefab": null,
         "FollowerPrefabChance": 1,
         "FollowerPrefabKill": true,
         "Force": true,
         "ForceDirection": "0,0,-1",
-        "ForceScale": 800,
+        "ForceScale": 55,
         "ForceSpace": "World",
         "Friction": 0.05,
         "Gradient": "1,1,1,1",
@@ -61,7 +61,7 @@
         "Lifetime": {
           "Type": "Range",
           "Evaluation": "Seed",
-          "Constants": "2.5,3.5,0,0"
+          "Constants": "4.5,6.5,0,0"
         },
         "LocalSpace": 0,
         "MaxParticles": 500,
@@ -88,7 +88,7 @@
         "SnapToFrame": false,
         "StartDelay": 0,
         "StartVelocity": 0,
-        "Stretch": 4,
+        "Stretch": 1.5,
         "TimeScale": 1,
         "Timing": "GameTime",
         "Tint": "1,1,1,1",
@@ -167,7 +167,7 @@
         "Radius": 4,
         "Rate": 0,
         "RateOverDistance": 0,
-        "Velocity": 450
+        "Velocity": 180
       }
     ],
     "Children": []

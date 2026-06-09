@@ -33,7 +33,9 @@ public sealed class GameManager : Component
 
 	// Confetti bursts queued during results. Populated locally on every client when the
 	// host's BroadcastBeginConfetti RPC arrives, then ticked locally to spawn prefab clones.
-	private readonly List<(TimeUntil at, Vector3 pos, Vector3 dir)> _confettiBurstSchedule = new();
+	// `initialVelocity` is per-burst world-space bias (inward toward the winner + upward)
+	// applied to the spawned ParticleEffect so confetti arcs up and over the player.
+	private readonly List<(TimeUntil at, Vector3 pos, Vector3 initialVelocity)> _confettiBurstSchedule = new();
 
 	// Per-client: drives the winner's celebratory hops during results. Only the client that
 	// owns the winner GameObject actually animates the transform; everyone else watches via
@@ -316,22 +318,32 @@ public sealed class GameManager : Component
 		winnerForward = winnerForward.Normal;
 
 		// (delay seconds, yaw offset from "directly behind" in degrees, radius, height)
+		// Spawn well behind the winner and at or below podium level so each burst starts
+		// near the bottom of the WinnerFocusCam frame, then arcs up into view.
 		var pattern = new (float delay, float yaw, float radius, float height)[]
 		{
-			( 0.00f,    0f, 70f, 20f ),  // dead behind
-			( 0.60f,  -55f, 80f, 25f ),  // behind-left
-			( 1.20f,   55f, 80f, 25f ),  // behind-right
-			( 2.00f,    0f, 60f, 35f ),  // behind, higher
-			( 2.80f,  -90f, 95f, 15f ),  // hard left flank
-			( 2.80f,   90f, 95f, 15f ),  // hard right flank
-			( 3.80f,    0f, 70f, 20f ),  // final center pop
+			( 0.00f,    0f, 110f,  -5f ),  // dead behind
+			( 0.60f,  -55f, 120f,   0f ),  // behind-left
+			( 1.20f,   55f, 120f,   0f ),  // behind-right
+			( 2.00f,    0f,  95f,  10f ),  // closer, slightly higher (over-the-top pop)
+			( 2.80f,  -90f, 135f, -10f ),  // hard left flank, low
+			( 2.80f,   90f, 135f, -10f ),  // hard right flank, low
+			( 3.80f,    0f, 110f,  -5f ),  // final center pop
 		};
 
 		foreach ( var (delay, yaw, radius, height) in pattern )
 		{
 			var offsetDir = Rotation.FromYaw( yaw ) * (-winnerForward);
 			var pos = podiumPos + offsetDir * radius + Vector3.Up * height;
-			_confettiBurstSchedule.Add( (delay, pos, winnerForward) );
+
+			// Push each particle horizontally toward the winner (so bursts behind/around
+			// them arc inward) and upward (so they rise into the camera frame before
+			// drifting back down like paper). World-space — the prefab has LocalSpace=0.
+			var inwardHorizontal = (podiumPos - pos).WithZ( 0f );
+			var inwardDir = inwardHorizontal.LengthSquared > 0.001f ? inwardHorizontal.Normal : Vector3.Zero;
+			var initialVelocity = inwardDir * 260f + Vector3.Up * 240f;
+
+			_confettiBurstSchedule.Add( (delay, pos, initialVelocity) );
 		}
 	}
 
@@ -344,7 +356,7 @@ public sealed class GameManager : Component
 			var entry = _confettiBurstSchedule[i];
 			if ( entry.at <= 0f )
 			{
-				SpawnConfettiLocally( entry.pos, entry.dir );
+				SpawnConfettiLocally( entry.pos, entry.initialVelocity );
 				_confettiBurstSchedule.RemoveAt( i );
 			}
 		}
@@ -448,25 +460,26 @@ public sealed class GameManager : Component
 		Color.White,
 	};
 
-	private void SpawnConfettiLocally( Vector3 spawnPos, Vector3 launchDirection )
+	private void SpawnConfettiLocally( Vector3 spawnPos, Vector3 initialVelocity )
 	{
 		if ( !ConfettiPrefab.IsValid() ) return;
 
-		var dir = launchDirection.LengthSquared > 0.001f ? launchDirection.Normal : Vector3.Forward;
-		var rotation = Rotation.LookAt( dir );
-
-		// One clone per color so each burst contains a mix of colored particles. The clone’s
+		// One clone per color so each burst contains a mix of colored particles. The clone's
 		// ParticleSphereEmitter is single-shot (Loop=false, DestroyOnEnd=true) so each cleans itself up.
 		foreach ( var color in ConfettiColors )
 		{
 			var clone = ConfettiPrefab.Clone( new CloneConfig
 			{
 				StartEnabled = true,
-				Transform = new Transform( spawnPos, rotation )
+				Transform = new Transform( spawnPos, Rotation.Identity )
 			} );
 
 			var effect = clone.GetComponent<ParticleEffect>();
-			if ( effect != null ) effect.Tint = color;
+			if ( effect != null )
+			{
+				effect.Tint = color;
+				effect.InitialVelocity = initialVelocity;
+			}
 		}
 	}
 
