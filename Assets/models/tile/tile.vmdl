@@ -23,7 +23,7 @@
 				[
 					{
 						_class = "RenderMeshFile"
-						filename = "models/tile/platform_1x1x1_yellow.fbx"
+						filename = "models/tile/tile.fbx"
 						import_translation = [ 0.0, 0.0, 0.0 ]
 						import_rotation = [ 0.0, 0.0, 0.0 ]
 						import_scale = 1.0
