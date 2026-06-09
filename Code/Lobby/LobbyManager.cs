@@ -29,8 +29,12 @@ public sealed class LobbyManager : Component
 	/// <summary>Seconds to wait, with everyone still ready, before actually loading the game scene.</summary>
 	private float LaunchSeconds { get; set; } = 3f;
 
+	/// <summary>Seconds the screen takes to fade to black at the tail of the launch countdown. Must be &lt;= <see cref="LaunchSeconds"/>.</summary>
+	private const float LaunchFadeDuration = 2f;
+
 	private TimeUntil _launchAt;
 	private bool _hasLaunched;
+	private bool _hasTriggeredLaunchFade;
 
 	protected override void OnEnabled()
 	{
@@ -45,6 +49,13 @@ public sealed class LobbyManager : Component
 
 	protected override void OnUpdate()
 	{
+		// Per-client: kick off the screen fade-out once the countdown enters the fade window.
+		if ( IsLaunching && !_hasTriggeredLaunchFade && (float)_launchAt <= LaunchFadeDuration )
+		{
+			_hasTriggeredLaunchFade = true;
+			ScreenFade.FadeOut( LaunchFadeDuration );
+		}
+
 		// Host owns the state machine; everyone runs the launch-elapsed check locally
 		// (broadcast-started, so all clients hit zero at roughly the same time).
 		if ( IsLaunching && (float)_launchAt <= 0f )
@@ -78,12 +89,18 @@ public sealed class LobbyManager : Component
 	{
 		_launchAt = seconds;
 		IsLaunching = true;
+		_hasTriggeredLaunchFade = false;
 	}
 
 	[Rpc.Broadcast]
 	private void BroadcastCountdownCancel()
 	{
 		IsLaunching = false;
+		if ( _hasTriggeredLaunchFade )
+		{
+			_hasTriggeredLaunchFade = false;
+			ScreenFade.FadeIn( LaunchFadeDuration );
+		}
 	}
 
 	private void LoadGameScene()

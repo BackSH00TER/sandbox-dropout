@@ -1,14 +1,10 @@
 using System;
 
 /// <summary>
-/// Scene-level spectator camera. Lives on the main camera GameObject. When
-/// activated for this client (because the local player was removed from the
-/// game), it takes over the camera transform and cycles between the remaining
-/// players with LMB / RMB.
-///
-/// Activation is driven externally — <see cref="GameManager"/> broadcasts a
-/// player-eliminated event and calls <see cref="Activate"/> on the local client
-/// whose player was removed.
+/// Free-orbit spectator camera. Lives on the main camera GameObject. Entered via
+/// <see cref="Activate"/> when the local player is eliminated: free mouse-look orbit,
+/// LMB/RMB cycles between remaining players. Bails while the results phase is up so
+/// <see cref="WinnerFocusCam"/> can drive the camera instead.
 /// </summary>
 public sealed class SpectatorMode : Component
 {
@@ -61,6 +57,8 @@ public sealed class SpectatorMode : Component
     protected override void OnUpdate()
     {
         if ( !IsActive ) return;
+        // Results phase: hand the camera over to WinnerFocusCam.
+        if ( VictoryManager.Current?.IsShowingResults == true ) return;
 
         var targets = GetAvailableTargets();
         if ( targets.Count == 0 )

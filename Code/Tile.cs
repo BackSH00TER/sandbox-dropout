@@ -33,6 +33,11 @@ public sealed class Tile : Component, Component.ITriggerListener
 	[Sync] private bool _triggered { get; set; } = false;
 	[Sync] private bool _falling { get; set; } = false;
 
+	// The per-layer color the host assigns at grid build time. Synced so non-host
+	// clients see the layer colors instead of the prefab default. Default is the zero
+	// color (alpha 0); we use that as the "not assigned" sentinel.
+	[Sync, Change( nameof( OnLayerTintChanged ) )] public Color LayerTint { get; set; }
+
 	private TimeUntil _breakAt;
 	private TimeUntil _destroyAt;
 	private Rotation _restRotation;
@@ -55,6 +60,10 @@ public sealed class Tile : Component, Component.ITriggerListener
 		if ( Model.IsValid() )
 		{
 			_modelRestPosition = Model.LocalPosition;
+			// If the host has already assigned a layer tint, apply it before capturing
+			// the rest color so the flash animation pulses between the tint and white.
+			if ( LayerTint.a > 0f )
+				Model.Tint = LayerTint;
 			_baseTint = Model.Tint;
 		}
 
@@ -155,6 +164,15 @@ public sealed class Tile : Component, Component.ITriggerListener
 		{
 			TriggerCollider.Enabled = enabled;
 		}
+	}
+
+	// Fires on clients when the host assigns LayerTint after the tile has already started.
+	private void OnLayerTintChanged( Color oldValue, Color newValue )
+	{
+		if ( newValue.a <= 0f ) return;
+		if ( Model.IsValid() )
+			Model.Tint = newValue;
+		_baseTint = newValue;
 	}
 
 	public void BreakTile()
