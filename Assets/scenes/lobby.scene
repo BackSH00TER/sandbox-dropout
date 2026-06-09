@@ -1399,7 +1399,7 @@
           "ZIndex": 200
         },
         {
-          "__type": "Sandbox.Lobby.LobbyFadeIn",
+          "__type": "Sandbox.ScreenFade",
           "__guid": "c3d4e5f6-a7b8-4c9d-0e1f-23456789abcd",
           "__enabled": true,
           "Flags": 0,

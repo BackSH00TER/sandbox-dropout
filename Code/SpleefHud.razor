@@ -31,17 +31,9 @@
             <div class="results-countdown">Returning to lobby in @resultsSecondsRemaining…</div>
         </div>
     }
-
-    @if (fadeOutOpacity > 0f)
-    {
-        <div class="fade-overlay" style="opacity: @fadeOutOpacity"></div>
-    }
 </root>
 
 @code {
-    // How long the black fade-to-scene-swap takes at the tail end of the results window.
-    private const float FadeOutDuration = 2f;
-
     [Property] public GameManager GameManager { get; set; }
 
     private TimeUntil gameStartTimer => GameManager.CountdownTimer;
@@ -51,7 +43,6 @@
     private bool isShowingResults;
     private string winnerName;
     private int resultsSecondsRemaining;
-    private float fadeOutOpacity;
 
     protected override void OnUpdate()
     {
@@ -66,15 +57,11 @@
                 ? winnerGameObject.Network?.Owner?.DisplayName ?? "Winner"
                 : "Nobody";
             resultsSecondsRemaining = System.Math.Max(0, (int)System.Math.Ceiling((float)GameManager.ResultsTimer));
-
-            float remaining = (float)GameManager.ResultsTimer;
-            fadeOutOpacity = System.Math.Clamp(1f - (remaining / FadeOutDuration), 0f, 1f);
         }
         else
         {
             winnerName = null;
             resultsSecondsRemaining = 0;
-            fadeOutOpacity = 0f;
         }
 
         var spectator = SpectatorMode.Current;
@@ -83,5 +70,5 @@
     }
 
     protected override int BuildHash() => System.HashCode.Combine(countdownText, isSpectating, spectatingName,
-        isShowingResults, winnerName, resultsSecondsRemaining, Input.UsingController, (int)(fadeOutOpacity * 100));
+        isShowingResults, winnerName, resultsSecondsRemaining, Input.UsingController);
 }

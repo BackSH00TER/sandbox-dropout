@@ -16,12 +16,17 @@ public sealed class GameManager : Component
 	// Drop the arena over the first chunk of the results window, leaving the tail for the
 	// podium to stand alone before the scene swaps.
 	public const float DisintegrationDuration = 5f;
+	// Seconds the screen takes to fade to black at the tail of the results window.
+	private const float ResultsFadeDuration = 2f;
 	[Sync] public bool IsShowingResults { get; private set; } = false;
 	[Sync] public GameObject Winner { get; private set; }
 	[Sync] public TimeUntil ResultsTimer { get; private set; }
 
 	// Host-only guard so we only kick off the scene change once.
 	private bool _hasFinishedResults = false;
+
+	// Per-client: ensures the closing fade-out fires once during the results window.
+	private bool _hasTriggeredResultsFade = false;
 
 	// Host-only: tiles queued to drop during results, sorted outward from the podium.
 	private readonly List<(Tile tile, TimeUntil at)> _disintegrationSchedule = new();
@@ -68,6 +73,13 @@ public sealed class GameManager : Component
 		TickWinnerHop();
 		// Per-client: drive the confetti schedule locally (populated by BroadcastBeginConfetti).
 		TickConfettiBursts();
+
+		// Per-client: trigger the closing screen fade once the results timer enters the fade window.
+		if ( IsShowingResults && !_hasTriggeredResultsFade && (float)ResultsTimer <= ResultsFadeDuration )
+		{
+			_hasTriggeredResultsFade = true;
+			ScreenFade.FadeOut( ResultsFadeDuration );
+		}
 
 		if ( !Networking.IsHost ) return;
 
