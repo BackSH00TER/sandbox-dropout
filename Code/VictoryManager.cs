@@ -42,15 +42,10 @@ public sealed class VictoryManager : Component
     // applied to the spawned ParticleEffect so confetti arcs up and over the player.
     private readonly List<(TimeUntil at, Vector3 pos, Vector3 initialVelocity)> _confettiBurstSchedule = new();
 
-    // Per-client: drives the winner's celebratory hops during results. Only the client that
-    // owns the winner GameObject actually animates the transform; everyone else watches via
-    // network transform sync.
-    private const float WinnerHopHeight = 40f;
-    private const float WinnerHopPeriod = 0.55f;  // seconds per up-and-back-down cycle
-    private float _winnerHopStartTime;
-    private Vector3 _winnerHopGroundPosition;
-    private bool _hasCapturedHopGround;
-    private bool _wasShowingResults;
+    // Per-client: keeps the winner in a celebratory pose during results. Renderer animation
+    // params are local-only (not network-synced), so each client sets the special_idle_states
+    // enum on its own SkinnedModelRenderer.
+    private const int WinnerIdleState = 1;  // citizen animgraph special_idle_states: 0=normal, 1=avatar_menu
 
     private static readonly Color[] ConfettiColors =
     {
@@ -75,8 +70,8 @@ public sealed class VictoryManager : Component
 
     protected override void OnFixedUpdate()
     {
-        // Per-client: drive the winner's hops regardless of host status.
-        TickWinnerHop();
+        // Per-client: hold the winner in their victory pose regardless of host status.
+        TickWinnerPose();
         // Per-client: drive the confetti schedule locally (populated by BroadcastBeginConfetti).
         TickConfettiBursts();
 
@@ -224,37 +219,16 @@ public sealed class VictoryManager : Component
         }
     }
 
-    // Runs on every client. Resets state when results begin, then on the owning client
-    // drives the winner's transform up-and-down with an abs(sin) wave for a continuous hop.
-    private void TickWinnerHop()
+    // Runs on every client. Holds the winner in the citizen animgraph's avatar_menu pose
+    // (hands-on-hips victory stance) for the duration of the results window.
+    private void TickWinnerPose()
     {
-        if ( !IsShowingResults || !Winner.IsValid() )
-        {
-            _wasShowingResults = false;
-            _hasCapturedHopGround = false;
-            return;
-        }
+        if ( !IsShowingResults || !Winner.IsValid() ) return;
 
-        if ( !_wasShowingResults )
-        {
-            _wasShowingResults = true;
-            _winnerHopStartTime = Time.Now;
-        }
+        PlayerController pc = Winner.GetComponent<PlayerController>( true );
+        if ( pc == null || !pc.Renderer.IsValid() ) return;
 
-        if ( !Winner.Network.IsOwner ) return;
-
-        // Capture the ground position once on the owner client, after the freeze + teleport
-        // have resolved, so the hop returns to the same spot every cycle.
-        if ( !_hasCapturedHopGround )
-        {
-            _hasCapturedHopGround = true;
-            _winnerHopGroundPosition = Winner.WorldPosition;
-        }
-
-        float elapsed = Time.Now - _winnerHopStartTime;
-        float phase = (elapsed / WinnerHopPeriod) * (float)System.Math.PI;
-        float z = System.Math.Abs( (float)System.Math.Sin( phase ) ) * WinnerHopHeight;
-        Winner.WorldPosition = _winnerHopGroundPosition + Vector3.Up * z;
+        pc.Renderer.Set( "special_idle_states", WinnerIdleState );
     }
 
     // Fanned out from the host so every client (including host) populates its own local
