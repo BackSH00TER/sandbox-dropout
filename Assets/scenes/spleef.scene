@@ -233,6 +233,7 @@
           "__enabled": true,
           "Flags": 0,
           "Debug_DisableGridPhysics": false,
+          "EliminatedSound": "sounds/vine boom.sound",
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
@@ -267,6 +268,7 @@
             "_type": "gameobject",
             "prefab": "prefabs/confetti_burst.prefab"
           },
+          "ConfettiSound": "sound/explosion3.sound",
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
@@ -479,6 +481,9 @@
   "ResourceVersion": 3,
   "Title": null,
   "Description": null,
-  "__references": [],
+  "__references": [
+    "igrotronika.explosion3#50757",
+    "stnkybo.vineboom#126082"
+  ],
   "__version": 3
 }

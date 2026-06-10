@@ -12,6 +12,7 @@ public sealed class VictoryManager : Component
 {
     [Property] TileManager TileManager { get; set; }
     [Property] public GameObject ConfettiPrefab { get; set; }
+    [Property] public SoundEvent ConfettiSound { get; set; }
     [Property] public SceneFile SceneToLoadFinish { get; set; }
 
     /// <summary>Total length of the victory phase, from winner declared to scene swap.</summary>
@@ -115,7 +116,7 @@ public sealed class VictoryManager : Component
             // Center the winner on the podium tile so a stray last step can't carry them off the edge.
             // Done after the freeze so there's no input window between snapping and locking inputs.
             if ( podiumGameObject.IsValid() )
-                BroadcastTeleportWinner( winnerGameObject, podiumGameObject.WorldPosition + Vector3.Up * 8f );
+                BroadcastTeleportWinner( winnerGameObject, podiumGameObject.WorldPosition );
         }
 
         ScheduleDisintegration( podiumGameObject );
@@ -409,6 +410,12 @@ public sealed class VictoryManager : Component
                 effect.Tint = color;
                 effect.InitialVelocity = initialVelocity;
             }
+        }
+
+        if ( ConfettiSound != null )
+        {
+            SoundHandle handle = Sound.Play( ConfettiSound, spawnPos );
+            handle.Volume = 0.2f;
         }
     }
 

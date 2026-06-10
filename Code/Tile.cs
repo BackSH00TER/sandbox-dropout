@@ -166,6 +166,15 @@ public sealed class Tile : Component, Component.ITriggerListener
 		}
 	}
 
+	// Snap the model back to its captured rest position, cancelling any in-progress
+	// depression bob. Useful when the tile is taken out of the normal break flow and
+	// the lerp in ClientFixedUpdate stops running.
+	public void SnapModelToRest()
+	{
+		if ( Model.IsValid() )
+			Model.LocalPosition = _modelRestPosition;
+	}
+
 	// Fires on clients when the host assigns LayerTint after the tile has already started.
 	private void OnLayerTintChanged( Color oldValue, Color newValue )
 	{
