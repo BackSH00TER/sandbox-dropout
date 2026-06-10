@@ -146,18 +146,18 @@
             "go": "f6fe2301-0d3c-46cc-bdc8-0b4ede82ca70",
             "component_type": "GameManager"
           },
-          "VictoryManager": {
-            "_type": "component",
-            "component_id": "5d2c1a98-3b4f-4e7c-8d1a-f6b9c0a5e3d2",
-            "go": "f6fe2301-0d3c-46cc-bdc8-0b4ede82ca70",
-            "component_type": "VictoryManager"
-          },
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
-          "OnComponentUpdate": null
+          "OnComponentUpdate": null,
+          "VictoryManager": {
+            "_type": "component",
+            "component_id": "5d2c1a98-3b4f-4e7c-8d1a-f6b9c0a5e3d2",
+            "go": "f6fe2301-0d3c-46cc-bdc8-0b4ede82ca70",
+            "component_type": "VictoryManager"
+          }
         }
       ],
       "Children": []
@@ -315,8 +315,8 @@
             "0.76078,0.92157,0.73725,1",
             "0.99216,0.98431,0.83529,1"
           ],
-          "LayerCount": 3,
-          "LayerSpacing": 256,
+          "LayerCount": 4,
+          "LayerSpacing": 300,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
@@ -329,7 +329,7 @@
             "prefab": "prefabs/tile.prefab"
           },
           "TintLayers": true,
-          "Width": 20
+          "Width": 10
         }
       ],
       "Children": []
