@@ -87,7 +87,7 @@
                 "MaterialGroup": null,
                 "MaterialOverride": null,
                 "Materials": null,
-                "Model": "models/tile/platform_1x1x1_yellow.vmdl",
+                "Model": "models/tile/tile.vmdl",
                 "OnComponentDestroy": null,
                 "OnComponentDisabled": null,
                 "OnComponentEnabled": null,
