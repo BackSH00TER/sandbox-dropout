@@ -323,7 +323,7 @@
             "0.99216,0.98431,0.83529,1"
           ],
           "LayerCount": 4,
-          "LayerSpacing": 300,
+          "LayerSpacing": 400,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
@@ -419,7 +419,7 @@
           "OnTriggerEnter": null,
           "OnTriggerExit": null,
           "RollingResistance": null,
-          "Scale": "2000,2000,50",
+          "Scale": "5000,5000,50",
           "Static": false,
           "Surface": null,
           "SurfaceVelocity": "0,0,0"
@@ -466,14 +466,14 @@
       "CustomBounds": false
     },
     "GameObjectSystems": {
-      "Sandbox.SelectionSetsSystem": {
-        "Data": {
-          "SelectionSets": []
-        }
-      },
       "Sandbox.Clutter.ClutterGridSystem": {
         "Storage": {
           "$blob": "ce94b569-3a84-48c7-aeca-9e67b25df731"
+        }
+      },
+      "Sandbox.SelectionSetsSystem": {
+        "Data": {
+          "SelectionSets": []
         }
       }
     }
