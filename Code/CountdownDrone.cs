@@ -12,7 +12,7 @@ public sealed class CountdownDrone : Component
 {
     [Property] public GameObject Propeller { get; set; }
 
-    [Property] public float PropellerSpinDegPerSec { get; set; } = 1440f;
+    [Property] public float PropellerSpinDegPerSec { get; set; } = 1152f;
     [Property] public float BounceAmplitude { get; set; } = 3f;
     [Property] public float BounceFrequency { get; set; } = 2.5f;
     [Property] public float LiftSpeed { get; set; } = 200f;
@@ -54,5 +54,10 @@ public sealed class CountdownDrone : Component
     {
         float bounce = MathF.Sin( Time.Now * BounceFrequency * MathF.Tau ) * BounceAmplitude;
         LocalPosition = _restPosition + Vector3.Up * bounce;
+
+        if ( Propeller != null )
+        {
+            Propeller.LocalRotation *= Rotation.FromYaw( PropellerSpinDegPerSec * Time.Delta );
+        }
     }
 }
