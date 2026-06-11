@@ -1,0 +1,50 @@
+@using Sandbox
+@using Sandbox.UI
+@inherits PanelComponent
+
+<root>
+    @if (seconds >= 0)
+    {
+        <div class="screen">
+            @if (seconds == 0)
+            {
+                <div class="value go">GO!</div>
+            }
+            else
+            {
+                <div class="value">@seconds</div>
+            }
+        </div>
+    }
+</root>
+
+<style>
+    .screen {
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+        background-color: rgb(10, 10, 14);
+        color: white;
+        font-family: Poppins;
+    }
+
+    .value {
+        font-size: 400px;
+        font-weight: 900;
+        color: #ffd84d;
+    }
+
+    .value.go {
+        color: #5cff7a;
+        font-size: 300px;
+    }
+</style>
+
+@code {
+    // Computed fresh from GameManager.CountdownTimer on every BuildHash / re-render.
+    // No OnUpdate, no cached state, no [Sync] — mirrors how LobbyBoard reads LobbyManager.
+    private int seconds => CountdownDrone.Current?.DisplaySeconds ?? -1;
+
+    protected override int BuildHash() => seconds;
+}

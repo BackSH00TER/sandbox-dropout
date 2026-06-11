@@ -14,9 +14,12 @@ public sealed class GameManager : Component
 	[Property] VictoryManager VictoryManager { get; set; }
 	[Property] public SoundEvent EliminatedSound { get; set; }
 
+	[Property] public GameObject CountdownDronePrefab { get; set; }
+	[Property] public Vector3 CountdownDroneSpawnOffset { get; set; } = new Vector3( 0f, 0f, 220f );
+
 	[Property, Group( "Debug" )] public bool Debug_DisableGridPhysics { get; set; } = false;
 
-	public TimeUntil CountdownTimer = 3f;
+	public TimeUntil CountdownTimer = 30f;
 	public bool CountdownActive { get; private set; } = false;
 	public bool GameInProgress { get; private set; } = false;
 
@@ -38,8 +41,26 @@ public sealed class GameManager : Component
 		if ( !Networking.IsHost ) return;
 
 		TileManager.BuildGrid();
+		SpawnCountdownDrone();
 		PlayerManager.SpawnPlayers();
+		PlayerManager.EnablePlayersInput(); // TEMP: let players move during countdown for inspection
 		CountdownActive = true;
+	}
+
+	private void SpawnCountdownDrone()
+	{
+		if ( CountdownDronePrefab == null ) return;
+
+		Vector3 spawnPos = TileManager.IsValid()
+			? TileManager.WorldPosition + CountdownDroneSpawnOffset
+			: WorldPosition + CountdownDroneSpawnOffset;
+
+		GameObject drone = CountdownDronePrefab.Clone( new CloneConfig
+		{
+			Transform = new Transform( spawnPos ),
+			Name = "CountdownDrone"
+		} );
+		drone.NetworkSpawn();
 	}
 
 	protected override void OnFixedUpdate()

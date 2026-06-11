@@ -229,6 +229,25 @@
         "OnComponentStart": null,
         "OnComponentUpdate": null,
         "StartDelay": 0.25
+      },
+      {
+        "__type": "PlayerCameraAim",
+        "__guid": "c1a2b3d4-e5f6-4789-9012-3456789abcde",
+        "__enabled": true,
+        "Flags": 0,
+        "MaxWaitSeconds": 1,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "PlayerController": {
+          "_type": "component",
+          "component_id": "437c1a29-6ce3-4657-97d3-33eaf57623cd",
+          "go": "22853010-82ce-406d-b7ab-2f7be3f5c50a",
+          "component_type": "PlayerController"
+        }
       }
     ],
     "Children": [
