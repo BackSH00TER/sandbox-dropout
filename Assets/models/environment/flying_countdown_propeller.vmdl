@@ -14,7 +14,11 @@
 						remaps = 
 						[
 							{
-								from = "cylinder.vmat"
+								from = "base.vmat"
+								to = "materials/flying_countdown_material.vmat"
+							},
+							{
+								from = "blade.vmat"
 								to = "materials/flying_countdown_material.vmat"
 							},
 						]
@@ -29,7 +33,7 @@
 				[
 					{
 						_class = "RenderMeshFile"
-						filename = "models/environment/flying_countdown_prop.fbx"
+						filename = "models/environment/flying_countdown_propeller.fbx"
 						import_translation = [ 0.0, 0.0, 0.0 ]
 						import_rotation = [ 0.0, 0.0, 0.0 ]
 						import_scale = 1.0
@@ -42,7 +46,7 @@
 							exclude_by_default = true
 							exception_list = 
 							[
-								"Cylinder",
+								"Cube_001",
 							]
 						}
 					},
