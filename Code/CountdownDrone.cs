@@ -16,7 +16,7 @@ public sealed class CountdownDrone : Component
     [Property] public float BounceAmplitude { get; set; } = 3f;
     [Property] public float BounceFrequency { get; set; } = 2.5f;
     [Property] public float LiftSpeed { get; set; } = 200f;
-    [Property] public float DespawnDelay { get; set; } = 3f;
+    [Property] public float DespawnDelay { get; set; } = 5f;
 
     public static CountdownDrone Current { get; private set; }
 
@@ -37,6 +37,8 @@ public sealed class CountdownDrone : Component
     }
 
     private Vector3 _restPosition;
+    private TimeUntil _despawnAt;
+    private bool _hasStartedLiftoff;
 
     protected override void OnEnabled()
     {
@@ -52,12 +54,38 @@ public sealed class CountdownDrone : Component
 
     protected override void OnUpdate()
     {
-        float bounce = MathF.Sin( Time.Now * BounceFrequency * MathF.Tau ) * BounceAmplitude;
-        LocalPosition = _restPosition + Vector3.Up * bounce;
+        if ( !_hasStartedLiftoff && DisplaySeconds == 0 )
+        {
+            _hasStartedLiftoff = true;
+            _despawnAt = DespawnDelay;
+        }
+
+        if ( _hasStartedLiftoff )
+        {
+            // Move upwards and despawn after the delay once the countdown hits zero
+            UpdateLiftoff();
+        }
+        else
+        {
+            // Hover in place bouncing up and down while the countdown is active
+            float bounce = MathF.Sin( Time.Now * BounceFrequency * MathF.Tau ) * BounceAmplitude;
+            LocalPosition = _restPosition + Vector3.Up * bounce;
+        }
 
         if ( Propeller != null )
         {
             Propeller.LocalRotation *= Rotation.FromYaw( PropellerSpinDegPerSec * Time.Delta );
+        }
+    }
+
+    private void UpdateLiftoff()
+    {
+        float elapsed = DespawnDelay - (float)_despawnAt;
+        LocalPosition = _restPosition + Vector3.Up * (LiftSpeed * elapsed);
+
+        if ( _despawnAt <= 0f )
+        {
+            GameObject.Destroy();
         }
     }
 }

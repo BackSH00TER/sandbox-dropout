@@ -19,7 +19,7 @@ public sealed class GameManager : Component
 
 	[Property, Group( "Debug" )] public bool Debug_DisableGridPhysics { get; set; } = false;
 
-	public TimeUntil CountdownTimer = 30f;
+	public TimeUntil CountdownTimer = 5f;
 	public bool CountdownActive { get; private set; } = false;
 	public bool GameInProgress { get; private set; } = false;
 
