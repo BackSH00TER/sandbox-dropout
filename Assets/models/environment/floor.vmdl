@@ -11,9 +11,30 @@
 				[
 					{
 						_class = "DefaultMaterialGroup"
-						remaps = [  ]
-						use_global_default = true
+						remaps = 
+						[
+							{
+								from = "prototype_texture.vmat"
+								to = "materials/kaykit_material.vmat"
+							},
+						]
+						use_global_default = false
 						global_default_material = "materials/kaykit-material.vmat"
+					},
+				]
+			},
+			{
+				_class = "PhysicsShapeList"
+				children = 
+				[
+					{
+						_class = "PhysicsHullFromRender"
+						parent_bone = ""
+						surface_prop = "default"
+						collision_tags = "solid"
+						faceMergeAngle = 20.0
+						maxHullVertices = 32
+						hull_mode = "HullPerElement"
 					},
 				]
 			},
@@ -23,7 +44,7 @@
 				[
 					{
 						_class = "RenderMeshFile"
-						filename = "models/tile/platform_1x1x1_yellow.fbx"
+						filename = "models/environment/floor.fbx"
 						import_translation = [ 0.0, 0.0, 0.0 ]
 						import_rotation = [ 0.0, 0.0, 0.0 ]
 						import_scale = 1.0
@@ -36,7 +57,7 @@
 							exclude_by_default = true
 							exception_list = 
 							[
-								"platform_1x1x1_yellow",
+								"Floor",
 							]
 						}
 					},

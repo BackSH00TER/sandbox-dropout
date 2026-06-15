@@ -1,10 +1,12 @@
 public sealed class TileManager : Component
 {
 	[Property] public GameObject TilePrefab { get; set; }
+	[Property] public GameObject KillBox { get; set; }
 	[Property] public int Width { get; set; } = 10;
 	[Property] public int Depth { get; set; } = 10;
-	[Property] public int LayerCount { get; set; } = 3;
-	[Property] public float LayerSpacing { get; set; } = 256f;
+	[Property] public int LayerCount { get; set; } = 4;
+	[Property] public float LayerSpacing { get; set; } = 350f;
+	[Property] public float KillBoxDropDistance { get; set; } = 500f;
 	[Property] public float Padding { get; set; } = 0f;
 	[Property] public bool Centered { get; set; } = true;
 	[Property] public bool TintLayers { get; set; } = true;
@@ -76,6 +78,17 @@ public sealed class TileManager : Component
 				}
 			}
 		}
+
+		PositionKillBox( cellZ );
+	}
+
+	// Dynamically position the killbox under the lowest layer
+	private void PositionKillBox( float cellZ )
+	{
+		if ( !KillBox.IsValid() ) return;
+
+		float bottomLayerWorldZ = WorldPosition.z - (LayerCount - 1) * cellZ;
+		KillBox.WorldPosition = KillBox.WorldPosition.WithZ( bottomLayerWorldZ - KillBoxDropDistance );
 	}
 
 	public void ActivateGrid()

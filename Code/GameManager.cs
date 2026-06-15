@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Sandbox;
 
@@ -11,6 +12,7 @@ public sealed class GameManager : Component
 	[Property] TileManager TileManager { get; set; }
 	[Property] PlayerManager PlayerManager { get; set; }
 	[Property] VictoryManager VictoryManager { get; set; }
+	[Property] public SoundEvent EliminatedSound { get; set; }
 
 	[Property, Group( "Debug" )] public bool Debug_DisableGridPhysics { get; set; } = false;
 
@@ -77,10 +79,12 @@ public sealed class GameManager : Component
 
 		Log.Info( $"Player '{name}' eliminated. Players remaining: {remaining.Count}" );
 
-		// Notify clients first — the eliminated player's owning client needs its
-		// GameObject to still exist when SpectatorMode activates so the local check
-		// against Network.IsOwner resolves correctly.
-		BroadcastPlayerEliminated( player.GameObject );
+		// Notify clients first. We pass the owner's connection ID (a value) instead of
+		// the player GameObject — the destroy packet can race the RPC and arrive first
+		// on the owning client, which would null out a GameObject param and skip both
+		// the sound and SpectatorMode activation.
+		Guid ownerId = player.Network?.Owner?.Id ?? Guid.Empty;
+		BroadcastPlayerEliminated( ownerId );
 
 		PlayerManager.DestroyPlayer( player );
 
@@ -92,12 +96,25 @@ public sealed class GameManager : Component
 	}
 
 	// Fanned out from the host. The owning client of the eliminated player flips its
-	// local SpectatorMode on; everyone else just sees the player's GameObject get destroyed.
+	// local SpectatorMode on and plays the elimination sound; everyone else just sees
+	// the player's GameObject get destroyed. We compare connection IDs rather than
+	// reading IsOwner off a GameObject ref so this still works if the destroy packet
+	// arrives before this RPC.
 	[Rpc.Broadcast]
-	private void BroadcastPlayerEliminated( GameObject playerGameObject )
+	private void BroadcastPlayerEliminated( Guid ownerConnectionId )
 	{
-		if ( playerGameObject == null ) return;
-		if ( !playerGameObject.Network.IsOwner ) return;
+		if ( Connection.Local == null || Connection.Local.Id != ownerConnectionId ) return;
+
+		if ( EliminatedSound != null )
+		{
+			// ListenLocal makes the sound play from the listener regardless of world
+			// position — needed because the SoundEvent is 3D and Sound.Play with no
+			// position plays at world origin, which is far from the player when they
+			// fall into the killbox.
+			var handle = Sound.Play( EliminatedSound );
+			handle.Volume = 0.2f;
+			handle.ListenLocal = true;
+		}
 
 		SpectatorMode.Current?.Activate();
 	}

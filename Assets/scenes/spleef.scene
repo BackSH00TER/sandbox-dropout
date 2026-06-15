@@ -146,18 +146,18 @@
             "go": "f6fe2301-0d3c-46cc-bdc8-0b4ede82ca70",
             "component_type": "GameManager"
           },
-          "VictoryManager": {
-            "_type": "component",
-            "component_id": "5d2c1a98-3b4f-4e7c-8d1a-f6b9c0a5e3d2",
-            "go": "f6fe2301-0d3c-46cc-bdc8-0b4ede82ca70",
-            "component_type": "VictoryManager"
-          },
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
-          "OnComponentUpdate": null
+          "OnComponentUpdate": null,
+          "VictoryManager": {
+            "_type": "component",
+            "component_id": "5d2c1a98-3b4f-4e7c-8d1a-f6b9c0a5e3d2",
+            "go": "f6fe2301-0d3c-46cc-bdc8-0b4ede82ca70",
+            "component_type": "VictoryManager"
+          }
         }
       ],
       "Children": []
@@ -233,6 +233,7 @@
           "__enabled": true,
           "Flags": 0,
           "Debug_DisableGridPhysics": false,
+          "EliminatedSound": "sounds/vine boom.sound",
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
@@ -267,6 +268,7 @@
             "_type": "gameobject",
             "prefab": "prefabs/confetti_burst.prefab"
           },
+          "ConfettiSound": "sound/explosion3.sound",
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
@@ -307,6 +309,11 @@
           "Flags": 0,
           "Centered": true,
           "Depth": 10,
+          "KillBox": {
+            "_type": "gameobject",
+            "go": "65b04251-72ad-424e-8506-89aa08092e7c"
+          },
+          "KillBoxDropDistance": 500,
           "LayerColors": [
             "0.59608,0.90588,0.84314,1",
             "0.99216,0.93725,0.56471,1",
@@ -315,8 +322,8 @@
             "0.76078,0.92157,0.73725,1",
             "0.99216,0.98431,0.83529,1"
           ],
-          "LayerCount": 3,
-          "LayerSpacing": 256,
+          "LayerCount": 4,
+          "LayerSpacing": 400,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
@@ -329,7 +336,7 @@
             "prefab": "prefabs/tile.prefab"
           },
           "TintLayers": true,
-          "Width": 20
+          "Width": 10
         }
       ],
       "Children": []
@@ -412,7 +419,7 @@
           "OnTriggerEnter": null,
           "OnTriggerExit": null,
           "RollingResistance": null,
-          "Scale": "2000,2000,50",
+          "Scale": "5000,5000,50",
           "Static": false,
           "Surface": null,
           "SurfaceVelocity": "0,0,0"
@@ -459,14 +466,14 @@
       "CustomBounds": false
     },
     "GameObjectSystems": {
-      "Sandbox.SelectionSetsSystem": {
-        "Data": {
-          "SelectionSets": []
-        }
-      },
       "Sandbox.Clutter.ClutterGridSystem": {
         "Storage": {
           "$blob": "ce94b569-3a84-48c7-aeca-9e67b25df731"
+        }
+      },
+      "Sandbox.SelectionSetsSystem": {
+        "Data": {
+          "SelectionSets": []
         }
       }
     }
@@ -474,6 +481,9 @@
   "ResourceVersion": 3,
   "Title": null,
   "Description": null,
-  "__references": [],
+  "__references": [
+    "igrotronika.explosion3#50757",
+    "stnkybo.vineboom#126082"
+  ],
   "__version": 3
 }

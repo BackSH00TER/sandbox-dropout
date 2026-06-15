@@ -18,13 +18,11 @@ public sealed class PodiumTile : Component
             renderer.Tint = Tint;
         }
 
-        // Tile drives wobble on the root and depression on a child model. Reset both so the
-        // podium isn't stuck mid-animation when the host Tile component gets disabled.
+        // Wobble rotates the prefab root — reset pitch/roll, keep yaw.
         WorldRotation = WorldRotation.Angles().WithRoll( 0f ).WithPitch( 0f ).ToRotation();
-        foreach ( var child in GameObject.Children )
-        {
-            child.LocalPosition = Vector3.Zero;
-            child.LocalRotation = Rotation.Identity;
-        }
+
+        // Snap the depression bob (on the inner TileModel from stepping on it) back to its rest position.
+        Tile tile = GameObject.GetComponentInChildren<Tile>( true );
+        tile?.SnapModelToRest();
     }
 }
