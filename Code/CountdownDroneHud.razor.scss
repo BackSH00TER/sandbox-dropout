@@ -1,0 +1,22 @@
+CountdownDroneHud {
+    .screen {
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(10, 10, 14, 0.5);
+        color: white;
+        font-family: Poppins;
+    }
+
+    .value {
+        font-size: 600px;
+        font-weight: 900;
+        color: #ffd84d;
+    }
+
+    .value.go {
+        color: #5cff7a;
+        font-size: 300px;
+    }
+}
