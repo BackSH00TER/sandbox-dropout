@@ -320,7 +320,7 @@
           "Flags": 0,
           "CountdownDronePrefab": null,
           "CountdownDroneSpawnOffset": "0,0,220",
-          "Debug_DisableGridPhysics": true,
+          "Debug_DisableGridPhysics": false,
           "EliminatedSound": "sounds/vine boom.sound",
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
