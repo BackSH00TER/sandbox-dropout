@@ -444,6 +444,93 @@
         }
       ],
       "Children": []
+    },
+    {
+      "__guid": "528b6867-6812-48a3-9694-41d2ffccbe1a",
+      "__version": 2,
+      "Flags": 0,
+      "Name": "Music",
+      "Position": "0,0,0",
+      "Rotation": "0,0,0,1",
+      "Scale": "1,1,1",
+      "Tags": "",
+      "Enabled": true,
+      "NetworkMode": 2,
+      "NetworkFlags": 0,
+      "NetworkOrphaned": 0,
+      "NetworkTransmit": true,
+      "OwnerTransfer": 1,
+      "Components": [
+        {
+          "__type": "Sandbox.SoundPointComponent",
+          "__guid": "78cd9bab-7d55-48f2-af30-1fa5e9f340b5",
+          "__enabled": true,
+          "Flags": 0,
+          "Distance": 512,
+          "DistanceAttenuation": false,
+          "DistanceAttenuationOverride": false,
+          "Falloff": [
+            {
+              "x": 0,
+              "y": 1,
+              "in": 3.1415927,
+              "out": -3.1415927,
+              "mode": "Mirrored"
+            },
+            {
+              "x": 1,
+              "y": 0,
+              "in": 0,
+              "out": 0,
+              "mode": "Mirrored"
+            }
+          ],
+          "Force2d": false,
+          "MaxRepeatTime": 1,
+          "MinRepeatTime": 1,
+          "OcclusionEnabled": false,
+          "OcclusionOverride": false,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "Pitch": 1,
+          "PlayOnStart": true,
+          "Repeat": false,
+          "ReverbEnabled": false,
+          "ReverbOverride": false,
+          "SoundEvent": "audio/music/spleef-game.sound",
+          "SoundOverride": true,
+          "StopOnNew": false,
+          "TargetMixer": {
+            "Name": "music",
+            "Id": "1cb5ee73-c4da-428d-8470-2472b5566c6c"
+          },
+          "Volume": 1
+        },
+        {
+          "__type": "Music",
+          "__guid": "51c9660c-f7e0-4908-a7a1-290a922c81f6",
+          "__enabled": true,
+          "Flags": 0,
+          "FadeInDuration": 3,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "SoundPoint": {
+            "_type": "component",
+            "component_id": "78cd9bab-7d55-48f2-af30-1fa5e9f340b5",
+            "go": "528b6867-6812-48a3-9694-41d2ffccbe1a",
+            "component_type": "SoundPointComponent"
+          }
+        }
+      ],
+      "Children": []
     }
   ],
   "SceneProperties": {
