@@ -57,6 +57,18 @@
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null
+        },
+        {
+          "__type": "WinnerFocusCam",
+          "__guid": "f1c9a3d2-7e84-4a2b-9f6c-1d8e3b4a5c70",
+          "__enabled": true,
+          "Flags": 0,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null
         }
       ],
       "Children": []
@@ -139,6 +151,61 @@
           "OnComponentEnabled": null,
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "VictoryManager": {
+            "_type": "component",
+            "component_id": "5d2c1a98-3b4f-4e7c-8d1a-f6b9c0a5e3d2",
+            "go": "f6fe2301-0d3c-46cc-bdc8-0b4ede82ca70",
+            "component_type": "VictoryManager"
+          }
+        }
+      ],
+      "Children": []
+    },
+    {
+      "__guid": "a1f2c3d4-e5f6-4a7b-8c9d-0123456789ab",
+      "__version": 2,
+      "Flags": 0,
+      "Name": "FadeOverlay",
+      "Position": "0,0,0",
+      "Rotation": "0,0,0,1",
+      "Scale": "1,1,1",
+      "Tags": "",
+      "Enabled": true,
+      "NetworkMode": 2,
+      "NetworkFlags": 0,
+      "NetworkOrphaned": 0,
+      "NetworkTransmit": true,
+      "OwnerTransfer": 1,
+      "Components": [
+        {
+          "__type": "Sandbox.ScreenPanel",
+          "__guid": "b2e3d4c5-f6a7-4b8c-9d0e-1234567890bc",
+          "__enabled": true,
+          "Flags": 0,
+          "AutoScreenScale": true,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "Opacity": 1,
+          "Scale": 1,
+          "ScaleStrategy": "ConsistentHeight",
+          "TargetCamera": null,
+          "ZIndex": 200
+        },
+        {
+          "__type": "Sandbox.ScreenFade",
+          "__guid": "c3d4e5f6-a7b8-4c9d-0e1f-23456789abce",
+          "__enabled": true,
+          "Flags": 0,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
           "OnComponentUpdate": null
         }
       ],
@@ -165,7 +232,8 @@
           "__guid": "9c1514bd-02c2-481d-8dab-bf84c8252e59",
           "__enabled": true,
           "Flags": 0,
-          "Debug_DisableGridPhysics": true,
+          "Debug_DisableGridPhysics": false,
+          "EliminatedSound": "sounds/vine boom.sound",
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
@@ -178,6 +246,35 @@
             "go": "6c42ae36-d268-4c7e-8a1e-417fbbd3a858",
             "component_type": "PlayerManager"
           },
+          "TileManager": {
+            "_type": "component",
+            "component_id": "671d0c06-f9f2-44fc-8219-11bd4afba293",
+            "go": "6aefde79-5015-4ec6-8d5a-438608964588",
+            "component_type": "TileManager"
+          },
+          "VictoryManager": {
+            "_type": "component",
+            "component_id": "5d2c1a98-3b4f-4e7c-8d1a-f6b9c0a5e3d2",
+            "go": "f6fe2301-0d3c-46cc-bdc8-0b4ede82ca70",
+            "component_type": "VictoryManager"
+          }
+        },
+        {
+          "__type": "VictoryManager",
+          "__guid": "5d2c1a98-3b4f-4e7c-8d1a-f6b9c0a5e3d2",
+          "__enabled": true,
+          "Flags": 0,
+          "ConfettiPrefab": {
+            "_type": "gameobject",
+            "prefab": "prefabs/confetti_burst.prefab"
+          },
+          "ConfettiSound": "sound/explosion3.sound",
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
           "SceneToLoadFinish": "scenes/lobby.scene",
           "TileManager": {
             "_type": "component",
@@ -212,6 +309,11 @@
           "Flags": 0,
           "Centered": true,
           "Depth": 10,
+          "KillBox": {
+            "_type": "gameobject",
+            "go": "65b04251-72ad-424e-8506-89aa08092e7c"
+          },
+          "KillBoxDropDistance": 500,
           "LayerColors": [
             "0.59608,0.90588,0.84314,1",
             "0.99216,0.93725,0.56471,1",
@@ -220,8 +322,8 @@
             "0.76078,0.92157,0.73725,1",
             "0.99216,0.98431,0.83529,1"
           ],
-          "LayerCount": 3,
-          "LayerSpacing": 256,
+          "LayerCount": 4,
+          "LayerSpacing": 400,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
@@ -234,7 +336,7 @@
             "prefab": "prefabs/tile.prefab"
           },
           "TintLayers": true,
-          "Width": 20
+          "Width": 10
         }
       ],
       "Children": []
@@ -317,7 +419,7 @@
           "OnTriggerEnter": null,
           "OnTriggerExit": null,
           "RollingResistance": null,
-          "Scale": "2000,2000,50",
+          "Scale": "5000,5000,50",
           "Static": false,
           "Surface": null,
           "SurfaceVelocity": "0,0,0"
@@ -451,14 +553,14 @@
       "CustomBounds": false
     },
     "GameObjectSystems": {
-      "Sandbox.SelectionSetsSystem": {
-        "Data": {
-          "SelectionSets": []
-        }
-      },
       "Sandbox.Clutter.ClutterGridSystem": {
         "Storage": {
           "$blob": "ce94b569-3a84-48c7-aeca-9e67b25df731"
+        }
+      },
+      "Sandbox.SelectionSetsSystem": {
+        "Data": {
+          "SelectionSets": []
         }
       }
     }
@@ -466,6 +568,9 @@
   "ResourceVersion": 3,
   "Title": null,
   "Description": null,
-  "__references": [],
+  "__references": [
+    "igrotronika.explosion3#50757",
+    "stnkybo.vineboom#126082"
+  ],
   "__version": 3
 }

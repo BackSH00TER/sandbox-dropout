@@ -6,7 +6,7 @@
     "Name": "tile",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
-    "Scale": "1,1,0.25",
+    "Scale": "2,2,1",
     "Tags": "",
     "Enabled": true,
     "NetworkMode": 1,
@@ -37,7 +37,7 @@
             "__guid": "5c93cb99-a1cf-4b71-b616-8d2b76d8d7f1",
             "__enabled": true,
             "Flags": 0,
-            "Center": "0,0,0",
+            "Center": "0,0,-25",
             "ColliderFlags": 0,
             "Elasticity": null,
             "Friction": null,
@@ -65,9 +65,9 @@
             "__version": 2,
             "Flags": 0,
             "Name": "TileModel",
-            "Position": "0,0,0",
+            "Position": "0,0,-50",
             "Rotation": "0,0,0,1",
-            "Scale": "1,1,1",
+            "Scale": "0.5,0.5,0.5",
             "Tags": "",
             "Enabled": true,
             "NetworkMode": 2,
@@ -85,9 +85,9 @@
                 "CreateAttachments": false,
                 "LodOverride": null,
                 "MaterialGroup": null,
-                "MaterialOverride": "materials/generic/floor_tile_c.vmat",
+                "MaterialOverride": null,
                 "Materials": null,
-                "Model": "models/dev/box.vmdl",
+                "Model": "models/tile/tile.vmdl",
                 "OnComponentDestroy": null,
                 "OnComponentDisabled": null,
                 "OnComponentEnabled": null,
@@ -100,8 +100,8 @@
                   "BloomLayer": false,
                   "AfterUILayer": false
                 },
-                "RenderType": "On",
-                "Tint": "0.44067,0.75613,0.90233,1"
+                "RenderType": "Off",
+                "Tint": "1,1,1,1"
               }
             ],
             "Children": []
@@ -129,7 +129,7 @@
             "__guid": "9d491a61-e82a-4a15-a2db-3d8ee5c1cfd8",
             "__enabled": true,
             "Flags": 0,
-            "Center": "0,0,50",
+            "Center": "0,0,25",
             "ColliderFlags": 0,
             "Elasticity": null,
             "Friction": null,
@@ -223,8 +223,6 @@
   "MenuPath": null,
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
-  "__references": [
-    "facepunch.floortilec#92506"
-  ],
+  "__references": [],
   "__version": 2
 }

@@ -1,8 +1,18 @@
+using System;
+using System.Linq;
+using Sandbox;
+
+/// <summary>
+/// Owns the core game loop: building the arena, spawning players, running the
+/// pre-game countdown, and detecting eliminations. Once only one player remains it
+/// hands off to <see cref="VictoryManager"/> for the post-game victory sequence.
+/// </summary>
 public sealed class GameManager : Component
 {
 	[Property] TileManager TileManager { get; set; }
 	[Property] PlayerManager PlayerManager { get; set; }
-	[Property] public SceneFile SceneToLoadFinish { get; set; }
+	[Property] VictoryManager VictoryManager { get; set; }
+	[Property] public SoundEvent EliminatedSound { get; set; }
 
 	[Property, Group( "Debug" )] public bool Debug_DisableGridPhysics { get; set; } = false;
 
@@ -36,15 +46,12 @@ public sealed class GameManager : Component
 	{
 		if ( !Networking.IsHost ) return;
 
-		if ( CountdownActive )
+		if ( CountdownActive && CountdownTimer <= 0f )
 		{
-			if ( CountdownTimer <= 0f )
-			{
-				GameInProgress = true;
-				CountdownActive = false;
-				if ( !Debug_DisableGridPhysics ) TileManager.ActivateGrid();
-				PlayerManager.EnablePlayersInput();
-			}
+			GameInProgress = true;
+			CountdownActive = false;
+			if ( !Debug_DisableGridPhysics ) TileManager.ActivateGrid();
+			PlayerManager.EnablePlayersInput();
 		}
 	}
 
@@ -63,53 +70,53 @@ public sealed class GameManager : Component
 		if ( !Networking.IsHost ) return;
 		if ( player == null || !player.IsValid() ) return;
 
-		var name = player.Network?.Owner?.DisplayName ?? player.GameObject.Name;
+		string name = player.Network?.Owner?.DisplayName ?? player.GameObject.Name;
 
 		// Destroy hasn't propagated yet, so filter out the eliminated player explicitly.
-		var remaining = Scene.GetAllComponents<PlayerController>()
+		List<PlayerController> remaining = Scene.GetAllComponents<PlayerController>()
 			.Where( p => p.IsValid() && p != player )
 			.ToList();
 
 		Log.Info( $"Player '{name}' eliminated. Players remaining: {remaining.Count}" );
 
-		// Notify clients first — the eliminated player's owning client needs its
-		// GameObject to still exist when SpectatorMode activates so the local check
-		// against Network.IsOwner resolves correctly.
-		BroadcastPlayerEliminated( player.GameObject );
+		// Notify clients first. We pass the owner's connection ID (a value) instead of
+		// the player GameObject — the destroy packet can race the RPC and arrive first
+		// on the owning client, which would null out a GameObject param and skip both
+		// the sound and SpectatorMode activation.
+		Guid ownerId = player.Network?.Owner?.Id ?? Guid.Empty;
+		BroadcastPlayerEliminated( ownerId );
 
 		PlayerManager.DestroyPlayer( player );
 
 		if ( remaining.Count <= 1 )
 		{
-			var winnerName = remaining.FirstOrDefault()?.Network?.Owner?.DisplayName ?? "Unknown";
-			Log.Info( $"{winnerName} won!" );
-			FinishGame();
+			GameInProgress = false;
+			VictoryManager?.BeginVictory( remaining.FirstOrDefault() );
 		}
 	}
 
 	// Fanned out from the host. The owning client of the eliminated player flips its
-	// local SpectatorMode on; everyone else just sees the player's GameObject get destroyed.
+	// local SpectatorMode on and plays the elimination sound; everyone else just sees
+	// the player's GameObject get destroyed. We compare connection IDs rather than
+	// reading IsOwner off a GameObject ref so this still works if the destroy packet
+	// arrives before this RPC.
 	[Rpc.Broadcast]
-	private void BroadcastPlayerEliminated( GameObject playerGameObject )
+	private void BroadcastPlayerEliminated( Guid ownerConnectionId )
 	{
-		if ( playerGameObject == null ) return;
-		if ( !playerGameObject.Network.IsOwner ) return;
+		if ( Connection.Local == null || Connection.Local.Id != ownerConnectionId ) return;
+
+		if ( EliminatedSound != null )
+		{
+			// ListenLocal makes the sound play from the listener regardless of world
+			// position — needed because the SoundEvent is 3D and Sound.Play with no
+			// position plays at world origin, which is far from the player when they
+			// fall into the killbox.
+			var handle = Sound.Play( EliminatedSound );
+			handle.Volume = 0.2f;
+			handle.ListenLocal = true;
+		}
 
 		SpectatorMode.Current?.Activate();
-	}
-
-	private void FinishGame()
-	{
-		if ( !Networking.IsHost ) return;
-
-		GameInProgress = false;
-
-		var loadOptions = new SceneLoadOptions();
-		loadOptions.SetScene( SceneToLoadFinish );
-		if ( !Game.ChangeScene( loadOptions ) )
-		{
-			Log.Error( $"Failed to load scene '{SceneToLoadFinish}'." );
-		}
 	}
 
 	/// <summary>

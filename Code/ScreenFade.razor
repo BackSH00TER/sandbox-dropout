@@ -1,0 +1,77 @@
+@using Sandbox
+@using Sandbox.UI
+@inherits PanelComponent
+
+<root>
+    @if (opacity > 0f)
+    {
+        <div class="fade" style="opacity: @opacity"></div>
+    }
+</root>
+
+<style>
+    .fade {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #000;
+        pointer-events: none;
+    }
+</style>
+
+@code {
+    public const float DefaultDuration = 2f;
+
+    /// <summary>Per-scene singleton so the static API can find the live instance.</summary>
+    public static ScreenFade Current { get; private set; }
+
+    private float startOpacity = 1f;
+    private float targetOpacity = 0f;
+    private float duration = DefaultDuration;
+    private RealTimeSince startedAt;
+    private float opacity = 1f;
+
+    /// <summary>Fade from black to clear over <paramref name="duration"/> seconds.</summary>
+    public static void FadeIn(float duration = DefaultDuration)
+    {
+        Current?.Begin(targetOpacity: 0f, duration);
+    }
+
+    /// <summary>Fade from clear to black over <paramref name="duration"/> seconds.</summary>
+    public static void FadeOut(float duration = DefaultDuration)
+    {
+        Current?.Begin(targetOpacity: 1f, duration);
+    }
+
+    protected override void OnEnabled()
+    {
+        base.OnEnabled();
+        Current = this;
+        opacity = 1f;
+        Begin(targetOpacity: 0f, DefaultDuration);
+    }
+
+    protected override void OnDisabled()
+    {
+        base.OnDisabled();
+        if (Current == this) Current = null;
+    }
+
+    protected override void OnUpdate()
+    {
+        float t = System.Math.Clamp((float)startedAt / duration, 0f, 1f);
+        opacity = MathX.Lerp(startOpacity, targetOpacity, t);
+    }
+
+    private void Begin(float targetOpacity, float duration)
+    {
+        startOpacity = opacity;
+        this.targetOpacity = targetOpacity;
+        this.duration = System.MathF.Max(0.0001f, duration);
+        startedAt = 0f;
+    }
+
+    protected override int BuildHash() => System.HashCode.Combine((int)(opacity * 100));
+}
