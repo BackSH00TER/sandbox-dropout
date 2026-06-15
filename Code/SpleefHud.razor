@@ -2,11 +2,6 @@
 @inherits PanelComponent
 
 <root>
-    @if (!string.IsNullOrEmpty(countdownText))
-    {
-        <div class="countdown">@countdownText</div>
-    }
-
     @if (isSpectating)
     {
         <div class="spectator">
@@ -37,8 +32,6 @@
     [Property] public GameManager GameManager { get; set; }
     [Property] public VictoryManager VictoryManager { get; set; }
 
-    private TimeUntil gameStartTimer => GameManager.CountdownTimer;
-    private string countdownText;
     private bool isSpectating;
     private string spectatingName;
     private bool isShowingResults;
@@ -47,8 +40,6 @@
 
     protected override void OnUpdate()
     {
-        countdownText = gameStartTimer > 0 ? $"Game starts in {(int)gameStartTimer} seconds" : null;
-
         isShowingResults = VictoryManager?.IsShowingResults ?? false;
 
         if (isShowingResults)
@@ -70,6 +61,6 @@
         spectatingName = isSpectating ? spectator.SpectatingName : null;
     }
 
-    protected override int BuildHash() => System.HashCode.Combine(countdownText, isSpectating, spectatingName,
+    protected override int BuildHash() => System.HashCode.Combine(isSpectating, spectatingName,
         isShowingResults, winnerName, resultsSecondsRemaining, Input.UsingController);
 }

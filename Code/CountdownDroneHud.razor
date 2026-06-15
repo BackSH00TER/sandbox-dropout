@@ -1,0 +1,27 @@
+@using Sandbox
+@using Sandbox.UI
+@inherits PanelComponent
+
+<root>
+    @if (seconds >= 0)
+    {
+        <div class="screen">
+            @if (seconds == 0)
+            {
+                <div class="value go">GO!</div>
+            }
+            else
+            {
+                <div class="value">@seconds</div>
+            }
+        </div>
+    }
+</root>
+
+@code {
+    // Computed fresh from GameManager.CountdownTimer on every BuildHash / re-render.
+    // No OnUpdate, no cached state, no [Sync] — mirrors how LobbyBoard reads LobbyManager.
+    private int seconds => CountdownDrone.Current?.DisplaySeconds ?? -1;
+
+    protected override int BuildHash() => seconds;
+}

@@ -128,7 +128,7 @@
       "Children": []
     },
     {
-      "__guid": "e140bde7-ef97-4203-97fa-f9c16b036872",
+      "__guid": "8de9e01c-6b90-411d-b616-dbb7ff6abeb9",
       "__version": 2,
       "__Prefab": "prefabs/environment.prefab",
       "__PrefabInstancePatch": {
@@ -179,12 +179,12 @@
         "MovedObjects": []
       },
       "__PrefabIdToInstanceId": {
-        "c6d7e86d-8988-4860-be45-e5b2d4a4278a": "e140bde7-ef97-4203-97fa-f9c16b036872",
-        "37a82424-1472-4fba-879f-2e98a3381f14": "adfc8302-5ec8-499e-abb7-6cb4f1611911",
-        "f0591d98-64d2-4a79-90db-7f4e3028e74c": "25416408-d36b-4241-bf3b-5e0ff11a0018",
-        "86aef45d-7c11-4535-8997-7b3cb67c9c50": "a7239a44-3055-43e7-9e1b-c98f2391adc5",
-        "a731499c-fcca-49c3-995f-0d13fd27a902": "446dc119-bfd1-4a30-b71f-a8acec5385bd",
-        "e4a745f4-b694-488b-ace6-115223f1d5a6": "996c1b36-f086-4fe8-9971-0868d3a495b8"
+        "c6d7e86d-8988-4860-be45-e5b2d4a4278a": "8de9e01c-6b90-411d-b616-dbb7ff6abeb9",
+        "37a82424-1472-4fba-879f-2e98a3381f14": "8b3d1248-ecf2-4a2e-961c-1078506cd8e2",
+        "f0591d98-64d2-4a79-90db-7f4e3028e74c": "cc736e27-77a5-4d55-b5bf-50fd3ae155bd",
+        "86aef45d-7c11-4535-8997-7b3cb67c9c50": "cd191582-c888-4b25-bbc6-c71c633d0984",
+        "a731499c-fcca-49c3-995f-0d13fd27a902": "99c29369-3bfb-47f4-a06e-20af6a735005",
+        "e4a745f4-b694-488b-ace6-115223f1d5a6": "257d5699-1520-421a-814e-198cb453ea69"
       }
     },
     {
@@ -318,7 +318,9 @@
           "__guid": "9c1514bd-02c2-481d-8dab-bf84c8252e59",
           "__enabled": true,
           "Flags": 0,
-          "Debug_DisableGridPhysics": true,
+          "CountdownDronePrefab": null,
+          "CountdownDroneSpawnOffset": "0,0,220",
+          "Debug_DisableGridPhysics": false,
           "EliminatedSound": "sounds/vine boom.sound",
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
@@ -530,6 +532,53 @@
         }
       ],
       "Children": []
+    },
+    {
+      "__guid": "70409083-7ffe-443b-a632-9f88a57506e7",
+      "__version": 2,
+      "__Prefab": "prefabs/countdown_drone.prefab",
+      "__PrefabInstancePatch": {
+        "AddedObjects": [],
+        "RemovedObjects": [],
+        "PropertyOverrides": [
+          {
+            "Target": {
+              "Type": "GameObject",
+              "IdValue": "d0a17e00-0000-4000-8000-000000000001"
+            },
+            "Property": "Position",
+            "Value": "0,0,263.280273"
+          }
+        ],
+        "MovedObjects": []
+      },
+      "__PrefabIdToInstanceId": {
+        "d0a17e00-0000-4000-8000-000000000001": "70409083-7ffe-443b-a632-9f88a57506e7",
+        "d0a17e00-0000-4000-8000-000000000010": "26634998-e9e6-413e-86f0-7272be7abc83",
+        "d0a17e00-0000-4000-8000-000000000002": "dd022cd7-0d48-4bd6-a0ba-24715ed9e64c",
+        "d0a17e00-0000-4000-8000-000000000011": "5e539cfb-4082-418f-be81-a05ab3bccbea",
+        "d0a17e00-0000-4000-8000-000000000003": "32016b2f-cb2c-4139-87eb-6b75858cff5a",
+        "d0a17e00-0000-4000-8000-000000000012": "a7509745-976c-4a92-9e83-b36537003ecf",
+        "d0a17e00-0000-4000-8000-000000000004": "0476706f-4d14-4683-ae17-19f7cfd17ef3",
+        "d0a17e00-0000-4000-8000-000000000013": "76c73af7-6536-4a29-8219-76c4537d875c",
+        "d0a17e00-0000-4000-8000-000000000014": "abeb54d2-d51d-48a8-97b7-2d6fd0b6dd2c",
+        "5ec1f916-018f-4523-94b3-ae4460306531": "037395bf-efc3-4b39-9ed4-dfc0e4c063f5",
+        "530909f4-2415-4501-ac43-249e46fde210": "03aaec9f-e607-4c7a-8ba3-429cf02e05b6",
+        "3837ab9c-fcf0-498a-ab69-cf1047cd5441": "2715c8d7-a099-4924-baaf-4ee411788acd",
+        "049d6453-752e-4a1b-b44e-a4362b8d5f8f": "cf0d040a-eaaa-4e8a-a42c-c3599ac70404",
+        "161c5aa6-87bf-4bb4-a8ca-5174524b9341": "510fe4cc-dda6-4571-8a74-67d5f77a1fc0",
+        "6f4d69e6-fb61-4524-915b-395f1cfab23c": "67e1af8d-e978-46bb-b6c6-d4610789d75b",
+        "b9bc4404-3723-408a-8f3e-cd95e7669a67": "9a416ced-540f-4b83-b3e5-8395addf97d5",
+        "d1075dfb-4b67-4920-95f0-d21d880c5001": "09e17152-e92f-4cc9-a76c-b9416f59a089",
+        "850943ba-4935-442e-b9c8-4f54e75530b6": "f2be1cff-b474-47d4-a3c3-c7a80291f504",
+        "4cc0eb49-e9e0-4347-ad28-b71106e5a099": "d9d26d5d-8f7b-4500-a7bd-31890cf81b3e",
+        "06c4004d-baa9-4cb8-8be3-58b5d3c08856": "7ac6c059-e676-48ea-beb7-e4c34675138a",
+        "ad82c73d-4973-4ca9-b024-9f3fdf2e7b14": "ccfd0b7c-6e0e-4337-8be6-b2aef6addd67",
+        "4df6f721-898c-4734-8ab6-db4f73846de6": "c0fe6029-f4e6-47ca-bf1e-2c3db92fb735",
+        "f6a9b5f5-268c-4aa1-ba7b-2eb3b8696501": "e719e9b4-0ece-44e5-9392-efb9a7973d56",
+        "9491faba-024f-40e8-983b-df93cba67376": "5f63d9c9-2d6e-4444-94ac-9a9e93277682",
+        "dff78f5e-372d-4022-8370-ed5475d081f8": "325cc3b8-aeb3-4f5d-8da0-e3d50b8f4d3c"
+      }
     },
     {
       "__guid": "1f65225c-d336-4eb2-9f50-f30d9dca35d6",
@@ -1621,14 +1670,14 @@
       "CustomBounds": false
     },
     "GameObjectSystems": {
-      "Sandbox.SelectionSetsSystem": {
-        "Data": {
-          "SelectionSets": []
-        }
-      },
       "Sandbox.Clutter.ClutterGridSystem": {
         "Storage": {
           "$blob": "ce94b569-3a84-48c7-aeca-9e67b25df731"
+        }
+      },
+      "Sandbox.SelectionSetsSystem": {
+        "Data": {
+          "SelectionSets": []
         }
       }
     }
