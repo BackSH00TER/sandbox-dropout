@@ -43,7 +43,6 @@ public sealed class GameManager : Component
 		TileManager.BuildGrid();
 		SpawnCountdownDrone();
 		PlayerManager.SpawnPlayers();
-		PlayerManager.EnablePlayersInput(); // TEMP: let players move during countdown for inspection
 		CountdownActive = true;
 	}
 
