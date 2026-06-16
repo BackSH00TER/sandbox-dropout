@@ -171,7 +171,7 @@
       "__version": 2,
       "Flags": 0,
       "Name": "NetworkController",
-      "Position": "139.336868,-392.983948,389.318726",
+      "Position": "0,0,31.6293507",
       "Rotation": "0,0,0,1",
       "Scale": "1,1,1",
       "Tags": "",
@@ -213,7 +213,7 @@
       "__version": 2,
       "Flags": 0,
       "Name": "SpawnPoint",
-      "Position": "-64,0,180.722565",
+      "Position": "-103.136612,0,103.543602",
       "Rotation": "0,0,0,1",
       "Scale": "1,1,1",
       "Tags": "",
@@ -236,6 +236,20 @@
           "OnComponentFixedUpdate": null,
           "OnComponentStart": null,
           "OnComponentUpdate": null
+        },
+        {
+          "__type": "LobbyPlayerSpawner",
+          "__guid": "d2f1a8b4-6c3e-4f9d-a1b2-c3d4e5f60718",
+          "__enabled": true,
+          "Flags": 0,
+          "DrawSpawnGizmo": false,
+          "OnComponentDestroy": null,
+          "OnComponentDisabled": null,
+          "OnComponentEnabled": null,
+          "OnComponentFixedUpdate": null,
+          "OnComponentStart": null,
+          "OnComponentUpdate": null,
+          "SpawnAreaSize": "450,650,0"
         }
       ],
       "Children": []
@@ -402,7 +416,7 @@
               "VerticalAlign": "Center"
             },
             {
-              "__type": "Sandbox.lobby.LobbyBoard",
+              "__type": "Sandbox.Lobby.LobbyBoard",
               "__guid": "f190df3a-ac23-438d-90c5-07ed3c92638f",
               "__enabled": true,
               "Flags": 0,
@@ -1973,7 +1987,7 @@
         },
         {
           "__type": "Music",
-          "__guid": "e680abcf-4fd6-48fb-8130-9bc092b4db75",
+          "__guid": "32953e58-2b96-4fdc-9c40-9d86fc505a4a",
           "__enabled": true,
           "Flags": 0,
           "AutoFadeIn": true,
