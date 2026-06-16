@@ -13,7 +13,7 @@
 						_class = "DefaultMaterialGroup"
 						remaps = [  ]
 						use_global_default = true
-						global_default_material = "c:/users/dj/documents/s&box projects/sandbox-spleef/assets/materials/kenney_material_002.vmat"
+						global_default_material = "materials/kenney_material_002.vmat"
 					},
 				]
 			},
