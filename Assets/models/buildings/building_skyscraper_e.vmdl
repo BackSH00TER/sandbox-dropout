@@ -23,7 +23,7 @@
 				[
 					{
 						_class = "RenderMeshFile"
-						filename = "models/environment/building_skyscraper_e.fbx"
+						filename = "models/buildings/building_skyscraper_e.fbx"
 						import_translation = [ 0.0, 0.0, 0.0 ]
 						import_rotation = [ 0.0, 0.0, 0.0 ]
 						import_scale = 1.0

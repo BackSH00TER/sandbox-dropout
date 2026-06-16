@@ -13,7 +13,7 @@
 						_class = "DefaultMaterialGroup"
 						remaps = [  ]
 						use_global_default = true
-						global_default_material = "materials/default.vmat"
+						global_default_material = "c:/users/dj/documents/s&box projects/sandbox-spleef/assets/materials/kenney_material_002.vmat"
 					},
 				]
 			},
@@ -23,7 +23,7 @@
 				[
 					{
 						_class = "RenderMeshFile"
-						filename = "models/environment/ready_area.fbx"
+						filename = "models/buildings/building_skyscraper_c.fbx"
 						import_translation = [ 0.0, 0.0, 0.0 ]
 						import_rotation = [ 0.0, 0.0, 0.0 ]
 						import_scale = 1.0
@@ -36,7 +36,7 @@
 							exclude_by_default = true
 							exception_list = 
 							[
-								"indicator_special_lines",
+								"building_skyscraper_c",
 							]
 						}
 					},
