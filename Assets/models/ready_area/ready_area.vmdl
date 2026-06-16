@@ -11,18 +11,8 @@
 				[
 					{
 						_class = "DefaultMaterialGroup"
-						remaps = 
-						[
-							{
-								from = "colormap.vmat"
-								to = "materials/kenney_material.vmat"
-							},
-							{
-								from = "emissive.vmat"
-								to = "materials/emissive_light.vmat"
-							},
-						]
-						use_global_default = false
+						remaps = [  ]
+						use_global_default = true
 						global_default_material = "materials/default.vmat"
 					},
 				]
@@ -33,7 +23,7 @@
 				[
 					{
 						_class = "RenderMeshFile"
-						filename = "models/environment/light.fbx"
+						filename = "models/ready_area/ready_area.fbx"
 						import_translation = [ 0.0, 0.0, 0.0 ]
 						import_rotation = [ 0.0, 0.0, 0.0 ]
 						import_scale = 1.0
@@ -46,8 +36,7 @@
 							exclude_by_default = true
 							exception_list = 
 							[
-								"button_floor_square",
-								"button",
+								"indicator_special_lines",
 							]
 						}
 					},
