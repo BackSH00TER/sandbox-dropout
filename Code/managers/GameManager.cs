@@ -7,7 +7,7 @@ using Sandbox;
 /// pre-game countdown, and detecting eliminations. Once only one player remains it
 /// hands off to <see cref="VictoryManager"/> for the post-game victory sequence.
 /// </summary>
-public sealed class GameManager : Component
+public sealed class GameManager : Component, Component.INetworkListener
 {
 	[Property] TileManager TileManager { get; set; }
 	[Property] PlayerManager PlayerManager { get; set; }
@@ -99,12 +99,16 @@ public sealed class GameManager : Component
 
 		Log.Info( $"Player '{name}' eliminated. Players remaining: {remaining.Count}" );
 
-		// Notify clients first. We pass the owner's connection ID (a value) instead of
-		// the player GameObject — the destroy packet can race the RPC and arrive first
-		// on the owning client, which would null out a GameObject param and skip both
-		// the sound and SpectatorMode activation.
-		Guid ownerId = player.Network?.Owner?.Id ?? Guid.Empty;
-		BroadcastPlayerEliminated( ownerId );
+		// Capture the owning connection before we destroy the player — Network.Owner
+		// becomes unreachable once the GameObject is gone.
+		Connection ownerConnection = player.Network?.Owner;
+		if ( ownerConnection != null )
+		{
+			using ( Rpc.FilterInclude( ownerConnection ) )
+			{
+				EnterSpectatorAfterElimination();
+			}
+		}
 
 		PlayerManager.DestroyPlayer( player );
 
@@ -115,23 +119,19 @@ public sealed class GameManager : Component
 		}
 	}
 
-	// Fanned out from the host. The owning client of the eliminated player flips its
-	// local SpectatorMode on and plays the elimination sound; everyone else just sees
-	// the player's GameObject get destroyed. We compare connection IDs rather than
-	// reading IsOwner off a GameObject ref so this still works if the destroy packet
-	// arrives before this RPC.
+	// Caller is expected to wrap this in Rpc.FilterInclude( ownerConnection ) so it
+	// only runs on the eliminated player's client. Without that filter every client
+	// would play the sound and enter spectator mode.
 	[Rpc.Broadcast]
-	private void BroadcastPlayerEliminated( Guid ownerConnectionId )
+	private void EnterSpectatorAfterElimination()
 	{
-		if ( Connection.Local == null || Connection.Local.Id != ownerConnectionId ) return;
-
 		if ( EliminatedSound != null )
 		{
 			// ListenLocal makes the sound play from the listener regardless of world
 			// position — needed because the SoundEvent is 3D and Sound.Play with no
 			// position plays at world origin, which is far from the player when they
 			// fall into the killbox.
-			var handle = Sound.Play( EliminatedSound );
+			SoundHandle handle = Sound.Play( EliminatedSound );
 			handle.Volume = 0.2f;
 			handle.ListenLocal = true;
 		}
@@ -140,19 +140,33 @@ public sealed class GameManager : Component
 	}
 
 	/// <summary>
-	/// TODO When a client connects to the server.
+	/// Host-only. Called when a client connects to the server. Players who join
+	/// after the game has started don't get a player controller — instead we tell
+	/// their client to drop straight into spectator mode.
 	/// </summary>
-	/// <param name="channel"></param>
-	public void OnActive( Connection channel )
+	public void OnActive( Connection newConnection )
 	{
 		if ( !Networking.IsHost ) return;
 
 		if ( GameInProgress )
 		{
-			Log.Info( $"Game already in progress, not spawning player '{channel.Name}' into the game." );
-			// Spawn them in spectate mode or something
-			// PlayerManager.SpawnSpectator( channel );
-			return;
+			Log.Info( $"Game already in progress; sending '{newConnection.Name}' into spectator mode." );
+
+			// Scoped filter so the [Rpc.Broadcast] call below is delivered only to the
+			// joining connection instead of fanning out to every client.
+			using ( Rpc.FilterInclude( newConnection ) )
+			{
+				JoinAsSpectator();
+			}
 		}
+	}
+
+	// Caller is expected to wrap this in Rpc.FilterInclude( newConnection ) so it only runs
+	// on the joining client. Without that filter everyone would flip into spectator mode.
+	[Rpc.Broadcast]
+	private void JoinAsSpectator()
+	{
+		Log.Info( "Joining as spectator." );
+		SpectatorMode.Current?.Activate();
 	}
 }
