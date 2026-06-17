@@ -61,7 +61,8 @@ public sealed class PlayerFallSound : Component, PlayerController.IEvents
     private void BroadcastFallSound()
     {
         if ( FallSound == null ) return;
-        Sound.Play( FallSound, WorldPosition );
+        // PlaySound from the the GameObject so the sound follows the player as they fall.
+        GameObject.PlaySound( FallSound );
     }
 
     // Stub — future hard-land impact thump keyed off `distance`.
