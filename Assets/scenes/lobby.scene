@@ -213,7 +213,7 @@
       "__version": 2,
       "Flags": 0,
       "Name": "SpawnPoint",
-      "Position": "-103.136612,0,103.543602",
+      "Position": "-103.136612,0,40.4002953",
       "Rotation": "0,0,0,1",
       "Scale": "1,1,1",
       "Tags": "",
@@ -2030,14 +2030,14 @@
       "CustomBounds": false
     },
     "GameObjectSystems": {
-      "Sandbox.Clutter.ClutterGridSystem": {
-        "Storage": {
-          "$blob": "e3ddc153-abca-4966-960d-83910fa81065"
-        }
-      },
       "Sandbox.SelectionSetsSystem": {
         "Data": {
           "SelectionSets": []
+        }
+      },
+      "Sandbox.Clutter.ClutterGridSystem": {
+        "Storage": {
+          "$blob": "e3ddc153-abca-4966-960d-83910fa81065"
         }
       }
     }
