@@ -248,6 +248,26 @@
           "go": "22853010-82ce-406d-b7ab-2f7be3f5c50a",
           "component_type": "PlayerController"
         }
+      },
+      {
+        "__type": "PlayerFallSound",
+        "__guid": "72a878d0-570c-4f01-9e4f-3f0c293c3629",
+        "__enabled": true,
+        "Flags": 0,
+        "FallSound": "audio/sound_effects/player_woo.sound",
+        "FallTriggerDistance": 80,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "PlayerController": {
+          "_type": "component",
+          "component_id": "437c1a29-6ce3-4657-97d3-33eaf57623cd",
+          "go": "22853010-82ce-406d-b7ab-2f7be3f5c50a",
+          "component_type": "PlayerController"
+        }
       }
     ],
     "Children": [
