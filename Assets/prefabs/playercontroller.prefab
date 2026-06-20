@@ -268,6 +268,25 @@
           "go": "22853010-82ce-406d-b7ab-2f7be3f5c50a",
           "component_type": "PlayerController"
         }
+      },
+      {
+        "__type": "PlayerOomphSound",
+        "__guid": "e27562f8-8842-45bf-88b0-e7630ed97f88",
+        "__enabled": true,
+        "Flags": 0,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "PlayerController": {
+          "_type": "component",
+          "component_id": "437c1a29-6ce3-4657-97d3-33eaf57623cd",
+          "go": "22853010-82ce-406d-b7ab-2f7be3f5c50a",
+          "component_type": "PlayerController"
+        },
+        "Sound": "audio/sound_effects/player_oomph.sound"
       }
     ],
     "Children": [
@@ -356,6 +375,7 @@
                 "__enabled": true,
                 "Flags": 0,
                 "__version": 2,
+                "Billboard": "None",
                 "BlendMode": "Normal",
                 "FogStrength": 1,
                 "HorizontalAlignment": "Center",
