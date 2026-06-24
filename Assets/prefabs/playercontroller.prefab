@@ -293,12 +293,17 @@
         "__guid": "684c2a4a-4474-4ec3-8927-fdc0c4921849",
         "__enabled": true,
         "Flags": 0,
+        "LeapCooldown": 3,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
+        "TargetBody": {
+          "_type": "gameobject",
+          "go": "6f834540-4a41-44d8-8e3f-d56ce7acc6d4"
+        },
         "TargetController": {
           "_type": "component",
           "component_id": "437c1a29-6ce3-4657-97d3-33eaf57623cd",
