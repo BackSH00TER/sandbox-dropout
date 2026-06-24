@@ -111,12 +111,13 @@ public sealed class VictoryManager : Component
         if ( winnerGameObject.IsValid() )
         {
             podiumGameObject = SetupPodium( winner );
-            BroadcastFreezeWinner( winnerGameObject );
 
-            // Center the winner on the podium tile so a stray last step can't carry them off the edge.
-            // Done after the freeze so there's no input window between snapping and locking inputs.
+            // Teleport must run while the rigidbody is still active so the position
+            // change propagates through physics/network sync before the freeze lands.
             if ( podiumGameObject.IsValid() )
                 BroadcastTeleportWinner( winnerGameObject, podiumGameObject.WorldPosition );
+
+            BroadcastFreezeWinner( winnerGameObject );
         }
 
         ScheduleDisintegration( podiumGameObject );
@@ -386,6 +387,17 @@ public sealed class VictoryManager : Component
     private void BroadcastTeleportWinner( GameObject winnerGameObject, Vector3 position )
     {
         if ( !winnerGameObject.IsValid() ) return;
+
+        // Lock input on every client so a held WASD / camera input can't carry the
+        // player off the podium during the one-frame gap before BroadcastFreezeWinner.
+        PlayerController pc = winnerGameObject.GetComponent<PlayerController>();
+        if ( pc != null )
+        {
+            pc.UseInputControls = false;
+            pc.UseCameraControls = false;
+            pc.WishVelocity = Vector3.Zero;
+        }
+
         if ( !winnerGameObject.Network.IsOwner ) return;
         winnerGameObject.WorldPosition = position;
     }

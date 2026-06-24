@@ -42,6 +42,7 @@ public sealed class Tile : Component, Component.ITriggerListener
 	private TimeUntil _destroyAt;
 	private Rotation _restRotation;
 	private Vector3 _modelRestPosition;
+	private bool _hasCapturedModelRest;
 	private bool _appliedBreakLocally = false;
 	private int _playersOnTile = 0;
 	private Color _baseTint = Color.White;
@@ -59,7 +60,7 @@ public sealed class Tile : Component, Component.ITriggerListener
 
 		if ( Model.IsValid() )
 		{
-			_modelRestPosition = Model.LocalPosition;
+			CaptureModelRest();
 			// If the host has already assigned a layer tint, apply it before capturing
 			// the rest color so the flash animation pulses between the tint and white.
 			if ( LayerTint.a > 0f )
@@ -171,8 +172,20 @@ public sealed class Tile : Component, Component.ITriggerListener
 	// the lerp in ClientFixedUpdate stops running.
 	public void SnapModelToRest()
 	{
-		if ( Model.IsValid() )
-			Model.LocalPosition = _modelRestPosition;
+		if ( !Model.IsValid() ) return;
+		// PodiumTile spawns a fresh tile and disables this component in the same frame,
+		// so OnStart may never have run — capture the prefab-default rest position now
+		// or the model snaps to (0,0,0) and rises above the collider top.
+		CaptureModelRest();
+		Model.LocalPosition = _modelRestPosition;
+	}
+
+	private void CaptureModelRest()
+	{
+		if ( _hasCapturedModelRest ) return;
+		if ( !Model.IsValid() ) return;
+		_modelRestPosition = Model.LocalPosition;
+		_hasCapturedModelRest = true;
 	}
 
 	// Fires on clients when the host assigns LayerTint after the tile has already started.
