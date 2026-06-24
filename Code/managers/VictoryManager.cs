@@ -112,6 +112,7 @@ public sealed class VictoryManager : Component
         {
             podiumGameObject = SetupPodium( winner );
 
+            // Center the winner on the podium tile so a stray last step can't carry them off the edge.
             // Teleport must run while the rigidbody is still active so the position
             // change propagates through physics/network sync before the freeze lands.
             if ( podiumGameObject.IsValid() )
