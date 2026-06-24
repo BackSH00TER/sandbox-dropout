@@ -19,9 +19,6 @@ public sealed class PlayerLeap : Component, PlayerController.IEvents
 		if ( TargetController.UseInputControls == false )
 			return;
 
-		if ( !TargetController.IsOnGround )
-			return;
-
 		if ( Input.Pressed( "attack1" ) && isLeaping == false && leapCooldownTime )
 			BeginLeap();
 	}
