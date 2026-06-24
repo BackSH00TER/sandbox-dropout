@@ -4,8 +4,9 @@ public sealed class PlayerImpactSound : Component, PlayerController.IEvents
 {
 	[Property] public PlayerController PlayerController { get; set; }
 	[Property] public SoundEvent Sound { get; set; }
-	[Property] public float MinFallDistance { get; set; } = 100f;
 
+	// Fallback for scenes with no TileManager (e.g. lobby).
+	private readonly float DefaultMinFallDistance = TileManager.Current?.LayerSpacing * 1.2f ?? 400f;
 	[Rpc.Broadcast]
 	private void BroadcastSound()
 	{
@@ -14,6 +15,7 @@ public sealed class PlayerImpactSound : Component, PlayerController.IEvents
 
 	void PlayerController.IEvents.OnLanded( float distance, Vector3 impactVelocity )
 	{
-		if ( distance > MinFallDistance ) BroadcastSound();
+		float minFallDistance = DefaultMinFallDistance;
+		if ( distance > minFallDistance ) BroadcastSound();
 	}
 }

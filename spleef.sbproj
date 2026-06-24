@@ -23,7 +23,7 @@
     "PerMapRanking": false,
     "LeaderboardType": "None",
     "CsProjName": "",
-    "StartupScene": "scenes/spleef.scene",
+    "StartupScene": "scenes/lobby.scene",
     "LaunchMode": "Normal"
   }
 }
