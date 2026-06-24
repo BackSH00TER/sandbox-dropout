@@ -369,7 +369,8 @@
             "component_id": "671d0c06-f9f2-44fc-8219-11bd4afba293",
             "go": "6aefde79-5015-4ec6-8d5a-438608964588",
             "component_type": "TileManager"
-          }
+          },
+          "VictoryMusic": "audio/music/spleef-victory.sound"
         }
       ],
       "Children": []
@@ -1761,14 +1762,14 @@
       "CustomBounds": false
     },
     "GameObjectSystems": {
-      "Sandbox.SelectionSetsSystem": {
-        "Data": {
-          "SelectionSets": []
-        }
-      },
       "Sandbox.Clutter.ClutterGridSystem": {
         "Storage": {
           "$blob": "ce94b569-3a84-48c7-aeca-9e67b25df731"
+        }
+      },
+      "Sandbox.SelectionSetsSystem": {
+        "Data": {
+          "SelectionSets": []
         }
       }
     }

@@ -13,6 +13,7 @@ public sealed class VictoryManager : Component
     [Property] TileManager TileManager { get; set; }
     [Property] public GameObject ConfettiPrefab { get; set; }
     [Property] public SoundEvent ConfettiSound { get; set; }
+    [Property] public SoundEvent VictoryMusic { get; set; }
     [Property] public SceneFile SceneToLoadFinish { get; set; }
 
     /// <summary>Total length of the victory phase, from winner declared to scene swap.</summary>
@@ -21,6 +22,8 @@ public sealed class VictoryManager : Component
     public const float DisintegrationDuration = 5f;
     // Seconds the screen takes to fade to black at the tail of the results window.
     private const float ResultsFadeDuration = 2f;
+    // Seconds the victory music ramps down for at the tail of the results window so the scene swap doesn't cut it off abruptly.
+    private const float VictoryMusicFadeDuration = 3f;
 
     [Sync] public bool IsShowingResults { get; private set; } = false;
     [Sync] public GameObject Winner { get; private set; }
@@ -33,6 +36,11 @@ public sealed class VictoryManager : Component
 
     // Per-client: ensures the closing fade-out fires once during the results window.
     private bool _hasTriggeredResultsFade = false;
+
+    // Per-client: starts the LerpTo on _victoryMusicHandle.Volume once the timer enters the window.
+    private bool _hasTriggeredMusicFade = false;
+
+    private SoundHandle _victoryMusicHandle;
 
     // Host-only: tiles queued to drop during results, sorted outward from the podium.
     private readonly List<(Tile tile, TimeUntil at)> _disintegrationSchedule = new();
@@ -65,6 +73,13 @@ public sealed class VictoryManager : Component
 
     protected override void OnDisabled()
     {
+        // Stop the victory music handle so it doesn't carry over into the next scene
+        if ( _victoryMusicHandle.IsValid() )
+        {
+            _victoryMusicHandle.Stop();
+            _victoryMusicHandle = null;
+        }
+
         if ( Current == this )
             Current = null;
     }
@@ -81,6 +96,18 @@ public sealed class VictoryManager : Component
         {
             _hasTriggeredResultsFade = true;
             ScreenFade.FadeOut( ResultsFadeDuration );
+        }
+
+        // Per-client: ramp the victory music down over the final stretch so the scene swap is more smooth
+        // Mirrors the LerpTo pattern in Music.FadeOut — trigger once on entering the window, then
+        // lerp every tick until the handle drops out / scene swaps.
+        if ( IsShowingResults && !_hasTriggeredMusicFade && (float)ResultsTimer <= VictoryMusicFadeDuration )
+        {
+            _hasTriggeredMusicFade = true;
+        }
+        if ( _hasTriggeredMusicFade && _victoryMusicHandle.IsValid() )
+        {
+            _victoryMusicHandle.Volume = _victoryMusicHandle.Volume.LerpTo( 0f, Time.Delta / VictoryMusicFadeDuration );
         }
 
         if ( !Networking.IsHost ) return;
@@ -441,6 +468,18 @@ public sealed class VictoryManager : Component
         IsShowingResults = true;
         Winner = winnerGameObject;
         ResultsTimer = ResultsDuration;
+
+        // Fade out any in-scene music (the spleef-game track) so the victory cue can take over
+        // cleanly. Music components live on dedicated GameObjects in the scene.
+        foreach ( Music music in Scene.GetAllComponents<Music>() )
+        {
+            music.FadeOut();
+        }
+
+        if ( VictoryMusic != null )
+        {
+            _victoryMusicHandle = Sound.Play( VictoryMusic );
+        }
     }
 
     private void FinishGame()
