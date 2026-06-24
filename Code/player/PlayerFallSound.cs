@@ -15,7 +15,7 @@ public sealed class PlayerFallSound : Component, PlayerController.IEvents
     /// How far the player must descend from their airborne peak before the fall
     /// sound triggers. Filters small jumps and step-downs.
     /// </summary>
-    [Property] public float FallTriggerDistance { get; set; } = 80f;
+    public float FallTriggerDistance { get; set; } = 100f;
 
     private float _airbornePeakZ;
     private bool _isTrackingFall;

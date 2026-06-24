@@ -1,11 +1,13 @@
 public sealed class TileManager : Component
 {
+	public static TileManager Current { get; private set; }
+
 	[Property] public GameObject TilePrefab { get; set; }
 	[Property] public GameObject KillBox { get; set; }
 	[Property] public int Width { get; set; } = 10;
 	[Property] public int Depth { get; set; } = 10;
 	[Property] public int LayerCount { get; set; } = 4;
-	[Property] public float LayerSpacing { get; set; } = 350f;
+	[Property] public float LayerSpacing { get; set; } = 400f;
 	[Property] public float KillBoxDropDistance { get; set; } = 500f;
 	[Property] public float Padding { get; set; } = 0f;
 	[Property] public bool Centered { get; set; } = true;
@@ -23,6 +25,17 @@ public sealed class TileManager : Component
 
 	};
 	public List<Vector3> AvailableSpawnLocations { get; private set; } = new();
+
+	protected override void OnEnabled()
+	{
+		Current = this;
+	}
+
+	protected override void OnDisabled()
+	{
+		if ( Current == this )
+			Current = null;
+	}
 
 	public void BuildGrid()
 	{

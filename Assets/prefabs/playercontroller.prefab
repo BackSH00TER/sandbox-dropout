@@ -284,7 +284,6 @@
         "__enabled": true,
         "Flags": 0,
         "FallSound": "audio/sound_effects/player_woo.sound",
-        "FallTriggerDistance": 80,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
