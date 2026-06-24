@@ -270,10 +270,11 @@
         }
       },
       {
-        "__type": "PlayerOomphSound",
-        "__guid": "e27562f8-8842-45bf-88b0-e7630ed97f88",
+        "__type": "PlayerImpactSound",
+        "__guid": "6b6dda96-c1b3-4400-917c-6ecb2b1e8d5e",
         "__enabled": true,
         "Flags": 0,
+        "MinFallDistance": 100,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -286,7 +287,7 @@
           "go": "22853010-82ce-406d-b7ab-2f7be3f5c50a",
           "component_type": "PlayerController"
         },
-        "Sound": "audio/sound_effects/player_oomph.sound"
+        "Sound": "audio/sound_effects/player_impact.sound"
       }
     ],
     "Children": [

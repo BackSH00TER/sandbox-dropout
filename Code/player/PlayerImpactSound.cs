@@ -1,9 +1,10 @@
 using Sandbox;
 
-public sealed class PlayerOomphSound : Component, PlayerController.IEvents
+public sealed class PlayerImpactSound : Component, PlayerController.IEvents
 {
 	[Property] public PlayerController PlayerController { get; set; }
 	[Property] public SoundEvent Sound { get; set; }
+	[Property] public float MinFallDistance { get; set; } = 100f;
 
 	[Rpc.Broadcast]
 	private void BroadcastSound()
@@ -13,6 +14,6 @@ public sealed class PlayerOomphSound : Component, PlayerController.IEvents
 
 	void PlayerController.IEvents.OnLanded( float distance, Vector3 impactVelocity )
 	{
-		if ( distance > 100 ) BroadcastSound();
+		if ( distance > MinFallDistance ) BroadcastSound();
 	}
 }
