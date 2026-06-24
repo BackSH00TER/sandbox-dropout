@@ -250,45 +250,6 @@
         }
       },
       {
-        "__type": "PlayerFallSound",
-        "__guid": "72a878d0-570c-4f01-9e4f-3f0c293c3629",
-        "__enabled": true,
-        "Flags": 0,
-        "FallSound": "audio/sound_effects/player_woo.sound",
-        "FallTriggerDistance": 80,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null,
-        "PlayerController": {
-          "_type": "component",
-          "component_id": "437c1a29-6ce3-4657-97d3-33eaf57623cd",
-          "go": "22853010-82ce-406d-b7ab-2f7be3f5c50a",
-          "component_type": "PlayerController"
-        }
-      },
-      {
-        "__type": "PlayerOomphSound",
-        "__guid": "e27562f8-8842-45bf-88b0-e7630ed97f88",
-        "__enabled": true,
-        "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null,
-        "PlayerController": {
-          "_type": "component",
-          "component_id": "437c1a29-6ce3-4657-97d3-33eaf57623cd",
-          "go": "22853010-82ce-406d-b7ab-2f7be3f5c50a",
-          "component_type": "PlayerController"
-        },
-        "Sound": "audio/sound_effects/player_oomph.sound"
-      },
-      {
         "__type": "PlayerLeap",
         "__guid": "684c2a4a-4474-4ec3-8927-fdc0c4921849",
         "__enabled": true,
@@ -316,6 +277,46 @@
           "go": "6f834540-4a41-44d8-8e3f-d56ce7acc6d4",
           "component_type": "SkinnedModelRenderer"
         }
+      },
+      {
+        "__type": "PlayerFallSound",
+        "__guid": "72a878d0-570c-4f01-9e4f-3f0c293c3629",
+        "__enabled": true,
+        "Flags": 0,
+        "FallSound": "audio/sound_effects/player_woo.sound",
+        "FallTriggerDistance": 80,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "PlayerController": {
+          "_type": "component",
+          "component_id": "437c1a29-6ce3-4657-97d3-33eaf57623cd",
+          "go": "22853010-82ce-406d-b7ab-2f7be3f5c50a",
+          "component_type": "PlayerController"
+        }
+      },
+      {
+        "__type": "PlayerImpactSound",
+        "__guid": "6b6dda96-c1b3-4400-917c-6ecb2b1e8d5e",
+        "__enabled": true,
+        "Flags": 0,
+        "MinFallDistance": 100,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "PlayerController": {
+          "_type": "component",
+          "component_id": "437c1a29-6ce3-4657-97d3-33eaf57623cd",
+          "go": "22853010-82ce-406d-b7ab-2f7be3f5c50a",
+          "component_type": "PlayerController"
+        },
+        "Sound": "audio/sound_effects/player_impact.sound"
       }
     ],
     "Children": [
