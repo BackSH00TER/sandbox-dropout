@@ -15,7 +15,7 @@ public sealed class PlayerImpactSound : Component, PlayerController.IEvents
 
 	void PlayerController.IEvents.OnLanded( float distance, Vector3 impactVelocity )
 	{
-		float minFallDistance = DefaultMinFallDistance;
-		if ( distance > minFallDistance ) BroadcastSound();
+		if ( GameObject.Network.Owner != Connection.Local ) return;
+		if ( distance > DefaultMinFallDistance ) BroadcastSound();
 	}
 }
