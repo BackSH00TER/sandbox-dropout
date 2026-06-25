@@ -154,7 +154,7 @@
           "__guid": "285f07cd-7368-42fe-b4d1-8cb78ce91af3",
           "__enabled": true,
           "Flags": 0,
-          "GameScene": "scenes/spleef.scene",
+          "GameScene": "scenes/game.scene",
           "MinPlayers": 1,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,

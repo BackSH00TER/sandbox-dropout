@@ -469,7 +469,7 @@ public sealed class VictoryManager : Component
         Winner = winnerGameObject;
         ResultsTimer = ResultsDuration;
 
-        // Fade out any in-scene music (the spleef-game track) so the victory cue can take over
+        // Fade out any in-scene music (the game track) so the victory cue can take over
         // cleanly. Music components live on dedicated GameObjects in the scene.
         foreach ( Music music in Scene.GetAllComponents<Music>() )
         {

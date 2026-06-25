@@ -1,8 +1,8 @@
 {
-  "Title": "Spleef",
+  "Title": "Dropout",
   "Type": "game",
   "Org": "waypoint",
-  "Ident": "spleef",
+  "Ident": "dropout",
   "Schema": 1,
   "IncludeSourceFiles": false,
   "Resources": null,
