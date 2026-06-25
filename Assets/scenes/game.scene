@@ -222,7 +222,7 @@
           "ZIndex": 100
         },
         {
-          "__type": "Sandbox.ui.SpleefHud",
+          "__type": "Sandbox.ui.SpectatorUI",
           "__guid": "e33ff9a6-9f6f-41fb-b2c9-c0b837309677",
           "__enabled": true,
           "Flags": 0,
@@ -370,7 +370,7 @@
             "go": "6aefde79-5015-4ec6-8d5a-438608964588",
             "component_type": "TileManager"
           },
-          "VictoryMusic": "audio/music/spleef-victory.sound"
+          "VictoryMusic": "audio/music/victory-music.sound"
         }
       ],
       "Children": []
@@ -1708,7 +1708,7 @@
           "Repeat": false,
           "ReverbEnabled": false,
           "ReverbOverride": false,
-          "SoundEvent": "audio/music/spleef-game.sound",
+          "SoundEvent": "audio/music/game-music.sound",
           "SoundOverride": true,
           "StopOnNew": false,
           "TargetMixer": {
