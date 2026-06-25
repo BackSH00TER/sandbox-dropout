@@ -1825,46 +1825,6 @@
             }
           ],
           "Children": []
-        },
-        {
-          "__guid": "797a4994-e6ec-4b30-8d9f-405ecc52a9a8",
-          "__version": 2,
-          "Flags": 0,
-          "Name": "Point Light",
-          "Position": "0,0,298.075989",
-          "Rotation": "0,0,0,1",
-          "Scale": "1,1,1",
-          "Tags": "light_point,light",
-          "Enabled": true,
-          "NetworkMode": 2,
-          "NetworkFlags": 0,
-          "NetworkOrphaned": 0,
-          "NetworkTransmit": true,
-          "OwnerTransfer": 1,
-          "Components": [
-            {
-              "__type": "Sandbox.PointLight",
-              "__guid": "4eb59ef9-0b8d-493f-b939-c5e76fa40c22",
-              "__enabled": true,
-              "Flags": 0,
-              "Attenuation": 1.0714285,
-              "Contribution": "Diffuse, Specular, Transmissive",
-              "FogMode": "Enabled",
-              "FogStrength": 1,
-              "LightColor": "1,0.97412,0.91373,1",
-              "OnComponentDestroy": null,
-              "OnComponentDisabled": null,
-              "OnComponentEnabled": null,
-              "OnComponentFixedUpdate": null,
-              "OnComponentStart": null,
-              "OnComponentUpdate": null,
-              "Radius": 200,
-              "ShadowBias": 0.0005,
-              "ShadowHardness": 0,
-              "Shadows": false
-            }
-          ],
-          "Children": []
         }
       ]
     },
@@ -2030,14 +1990,14 @@
       "CustomBounds": false
     },
     "GameObjectSystems": {
-      "Sandbox.SelectionSetsSystem": {
-        "Data": {
-          "SelectionSets": []
-        }
-      },
       "Sandbox.Clutter.ClutterGridSystem": {
         "Storage": {
           "$blob": "e3ddc153-abca-4966-960d-83910fa81065"
+        }
+      },
+      "Sandbox.SelectionSetsSystem": {
+        "Data": {
+          "SelectionSets": []
         }
       }
     }
