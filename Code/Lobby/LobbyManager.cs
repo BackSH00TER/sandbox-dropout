@@ -20,7 +20,7 @@ public sealed class LobbyManager : Component
 	public bool IsLaunching { get; private set; }
 
 	/// <summary>Seconds left on the launch countdown on this client. Only meaningful while <see cref="IsLaunching"/>.</summary>
-	public float LaunchSecondsRemaining => MathF.Max(0f, (float)_launchAt);
+	public float LaunchSecondsRemaining => MathF.Max( 0f, (float)_launchAt );
 
 	/// <summary>Scene-wide singleton so the lobby UI can find us without a hard reference.</summary>
 	public static LobbyManager Current { get; private set; }
@@ -42,24 +42,24 @@ public sealed class LobbyManager : Component
 
 	protected override void OnDisabled()
 	{
-		if (Current == this)
+		if ( Current == this )
 			Current = null;
 	}
 
 	protected override void OnUpdate()
 	{
 		// Per-client: kick off the screen fade-out once the countdown enters the fade window.
-		if (IsLaunching && !_hasTriggeredLaunchFade && (float)_launchAt <= LaunchFadeDuration)
+		if ( IsLaunching && !_hasTriggeredLaunchFade && (float)_launchAt <= LaunchFadeDuration )
 		{
 			_hasTriggeredLaunchFade = true;
-			ScreenFade.FadeOut(LaunchFadeDuration);
+			ScreenFade.FadeOut( LaunchFadeDuration );
 		}
 
 		// Host owns the state machine; everyone runs the launch-elapsed check locally
 		// (broadcast-started, so all clients hit zero at roughly the same time).
-		if (IsLaunching && (float)_launchAt <= 0f)
+		if ( IsLaunching && (float)_launchAt <= 0f )
 		{
-			if (Networking.IsHost && !_hasLaunched)
+			if ( Networking.IsHost && !_hasLaunched )
 			{
 				_hasLaunched = true;
 				LoadGameScene();
@@ -67,24 +67,25 @@ public sealed class LobbyManager : Component
 			IsLaunching = false;
 		}
 
-		if (!Networking.IsHost) return;
-		if (_hasLaunched) return;
+		if ( !Networking.IsHost ) return;
+		if ( _hasLaunched ) return;
 
 		var states = Scene.GetAllComponents<PlayerReadyState>().ToList();
-		bool areAllPlayersReady = states.Count >= MinPlayers && states.All(s => s.IsReady);
+		int readyCount = states.Count( s => s.IsReady );
+		bool hasMajority = readyCount > states.Count / 2.0; // More than 50%
 
-		if (areAllPlayersReady && !IsLaunching)
+		if ( hasMajority && !IsLaunching )
 		{
-			BroadcastCountdownStart(LaunchSeconds);
+			BroadcastCountdownStart( LaunchSeconds );
 		}
-		else if (!areAllPlayersReady && IsLaunching)
+		else if ( !hasMajority && IsLaunching )
 		{
 			BroadcastCountdownCancel();
 		}
 	}
 
 	[Rpc.Broadcast]
-	private void BroadcastCountdownStart(float seconds)
+	private void BroadcastCountdownStart( float seconds )
 	{
 		_launchAt = seconds;
 		IsLaunching = true;
@@ -95,18 +96,18 @@ public sealed class LobbyManager : Component
 	private void BroadcastCountdownCancel()
 	{
 		IsLaunching = false;
-		if (_hasTriggeredLaunchFade)
+		if ( _hasTriggeredLaunchFade )
 		{
 			_hasTriggeredLaunchFade = false;
-			ScreenFade.FadeIn(LaunchFadeDuration);
+			ScreenFade.FadeIn( LaunchFadeDuration );
 		}
 	}
 
 	private void LoadGameScene()
 	{
-		if (GameScene is null)
+		if ( GameScene is null )
 		{
-			Log.Warning("LobbyManager: GameScene is not assigned, can't launch.");
+			Log.Warning( "LobbyManager: GameScene is not assigned, can't launch." );
 			return;
 		}
 
@@ -116,6 +117,6 @@ public sealed class LobbyManager : Component
 	[Rpc.Broadcast]
 	private void BroadcastLoadGameScene()
 	{
-		Game.ActiveScene.LoadFromFile(GameScene.ResourcePath);
+		Game.ActiveScene.LoadFromFile( GameScene.ResourcePath );
 	}
 }
