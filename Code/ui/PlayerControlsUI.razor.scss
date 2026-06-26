@@ -1,0 +1,20 @@
+PlayerControlsUI {
+	position: absolute;
+	top: 80vh;
+	left: 2vw;
+	right: 0;
+	bottom: 0;
+	background-color: transparent;
+	justify-content: left;
+	align-items: center;
+	font-weight: bold;
+	border-radius: 0;
+
+	.prompt {
+		font-size: 48px;
+		font-family: Poppins;
+		align-items: center;
+		color: #fff;
+		text-shadow: 0px 2px 12px rgba(#000, 0.8);
+	}
+}

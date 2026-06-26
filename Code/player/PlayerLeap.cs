@@ -11,6 +11,11 @@ public sealed class PlayerLeap : Component, PlayerController.IEvents
 	bool isLeaping = false;
 	private TimeUntil leapCooldownTime = -1f;
 
+	protected override void OnStart()
+	{
+		leapCooldownTime = LeapCooldown;
+		Sandbox.PlayerControlsUI.DivePrompt = "Dive";
+	}
 
 	protected override void OnFixedUpdate()
 	{
@@ -21,6 +26,15 @@ public sealed class PlayerLeap : Component, PlayerController.IEvents
 
 		if ( Input.Pressed( "attack1" ) && isLeaping == false && leapCooldownTime )
 			BeginLeap();
+
+		if ( leapCooldownTime )
+		{
+			Sandbox.PlayerControlsUI.DivePrompt = "Dive";
+		}
+		else
+		{
+			Sandbox.PlayerControlsUI.DivePrompt = leapCooldownTime.ToString();
+		}
 	}
 
 	[Rpc.Broadcast]

@@ -1,0 +1,20 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+@namespace Sandbox
+
+<root>
+	<span class="prompt">
+		<Image class="glyph" Texture=@Input.GetGlyph("Attack1", InputGlyphSize.Medium, GlyphStyle.Light) /> @DivePrompt
+	</span>
+</root>
+
+@code
+{
+	public static string DivePrompt { get; set; }
+
+	/// <summary>
+	/// the hash determines if the system should be rebuilt. If it changes, it will be rebuilt
+	/// </summary>
+	protected override int BuildHash() => System.HashCode.Combine(DivePrompt);
+}
