@@ -6,7 +6,7 @@
 <root>
 	<span class="prompt">
 		<Image class="glyph" Texture=@Input.GetGlyph("Attack1", InputGlyphSize.Medium, GlyphStyle.Light) />
-		<span class="text">@DivePrompt</span>
+		<span class="text @(DivePrompt == "Dive" ? "Ready" : "OnCooldown")">@DivePrompt</span>
 	</span>
 </root>
 
