@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using Sandbox;
 
@@ -6,16 +7,10 @@ public sealed class PlayerLeap : Component, PlayerController.IEvents
 	[Property] PlayerController TargetController { get; set; }
 	[Property] GameObject TargetBody { get; set; }
 	[Property] SkinnedModelRenderer TargetRenderer { get; set; }
-	[Property] float LeapCooldown { get; set; } = 3f;
 
 	bool isLeaping = false;
-	private TimeUntil leapCooldownTime = -1f;
-
-	protected override void OnStart()
-	{
-		leapCooldownTime = LeapCooldown;
-		Sandbox.PlayerControlsUI.DivePrompt = "Dive";
-	}
+	private float leapCooldown = 3f;
+	private float leapCooldownTime = 0f;
 
 	protected override void OnFixedUpdate()
 	{
@@ -24,17 +19,22 @@ public sealed class PlayerLeap : Component, PlayerController.IEvents
 		if ( TargetController.UseInputControls == false )
 			return;
 
-		if ( Input.Pressed( "attack1" ) && isLeaping == false && leapCooldownTime )
-			BeginLeap();
+		if ( !isLeaping )
+		{
+			leapCooldownTime -= 1 * Time.Delta;
+		}
 
-		if ( leapCooldownTime )
+		Sandbox.PlayerControlsUI.DivePrompt = Math.Floor( leapCooldownTime + 1 ).ToString();
+		if ( leapCooldownTime < 0.01 )
 		{
 			Sandbox.PlayerControlsUI.DivePrompt = "Dive";
 		}
-		else
+
+		if ( Input.Pressed( "attack1" ) && isLeaping == false && leapCooldownTime < 0.01 )
 		{
-			Sandbox.PlayerControlsUI.DivePrompt = leapCooldownTime.ToString();
+			BeginLeap();
 		}
+
 	}
 
 	[Rpc.Broadcast]
@@ -42,7 +42,7 @@ public sealed class PlayerLeap : Component, PlayerController.IEvents
 	{
 		// Set state
 		isLeaping = true;
-		leapCooldownTime = LeapCooldown;
+		leapCooldownTime = leapCooldown;
 
 		// Update properties
 		TargetController.UseInputControls = false;
@@ -66,7 +66,10 @@ public sealed class PlayerLeap : Component, PlayerController.IEvents
 	void PlayerController.IEvents.OnLanded( float distance, Vector3 impactVelocity )
 	{
 		if ( isLeaping )
+		{
 			FinishLeap();
+		}
+
 	}
 
 	private void FinishLeap()
