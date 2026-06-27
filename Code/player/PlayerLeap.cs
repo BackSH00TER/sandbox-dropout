@@ -16,25 +16,23 @@ public sealed class PlayerLeap : Component, PlayerController.IEvents
 	{
 		if ( IsProxy ) return;
 
-		if ( TargetController.UseInputControls == false )
-			return;
-
-		if ( !isLeaping )
+		if ( isLeaping )
+		{
+			Sandbox.PlayerControlsUI.DivePrompt = "-";
+		}
+		else if ( !isLeaping )
 		{
 			leapCooldownTime -= 1 * Time.Delta;
+			Sandbox.PlayerControlsUI.DivePrompt = Math.Floor( leapCooldownTime + 1 ).ToString();
+			if ( leapCooldownTime < 0.01 )
+			{
+				Sandbox.PlayerControlsUI.DivePrompt = "Dive";
+				if ( Input.Pressed( "attack1" ) && TargetController.UseInputControls )
+				{
+					BeginLeap();
+				}
+			}
 		}
-
-		Sandbox.PlayerControlsUI.DivePrompt = Math.Floor( leapCooldownTime + 1 ).ToString();
-		if ( leapCooldownTime < 0.01 )
-		{
-			Sandbox.PlayerControlsUI.DivePrompt = "Dive";
-		}
-
-		if ( Input.Pressed( "attack1" ) && isLeaping == false && leapCooldownTime < 0.01 )
-		{
-			BeginLeap();
-		}
-
 	}
 
 	[Rpc.Broadcast]
