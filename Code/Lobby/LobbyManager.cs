@@ -74,7 +74,7 @@ public sealed class LobbyManager : Component
 
 		var states = Scene.GetAllComponents<PlayerReadyState>().ToList();
 		int readyCount = states.Count( s => s.IsReady );
-		bool hasMajority = readyCount > states.Count * percentReadyRequired; //
+		bool hasMajority = readyCount >= states.Count * percentReadyRequired; //
 
 		if ( hasMajority && !IsLaunching )
 		{
