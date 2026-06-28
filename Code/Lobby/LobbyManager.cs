@@ -35,6 +35,8 @@ public sealed class LobbyManager : Component
 	private bool _hasLaunched;
 	private bool _hasTriggeredLaunchFade;
 
+	private float percentReadyRequired = 0.5f; // 50% of players
+
 	protected override void OnEnabled()
 	{
 		Current = this;
@@ -72,7 +74,7 @@ public sealed class LobbyManager : Component
 
 		var states = Scene.GetAllComponents<PlayerReadyState>().ToList();
 		int readyCount = states.Count( s => s.IsReady );
-		bool hasMajority = readyCount > states.Count / 2.0; // More than 50%
+		bool hasMajority = readyCount > states.Count * percentReadyRequired; //
 
 		if ( hasMajority && !IsLaunching )
 		{
