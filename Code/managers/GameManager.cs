@@ -99,6 +99,10 @@ public sealed class GameManager : Component, Component.INetworkListener
 
 		Log.Info( $"Player '{name}' eliminated. Players remaining: {remaining.Count}" );
 
+		// Capture the world position before we destroy the player
+		Vector3 eliminationPosition = player.WorldPosition;
+		BroadcastPlayEliminationSound( eliminationPosition );
+
 		// Capture the owning connection before we destroy the player — Network.Owner
 		// becomes unreachable once the GameObject is gone.
 		Connection ownerConnection = player.Network?.Owner;
@@ -119,23 +123,26 @@ public sealed class GameManager : Component, Component.INetworkListener
 		}
 	}
 
+	// Fanned out so every client plays the elimination cue at the eliminated player's
+	// last known position
+	[Rpc.Broadcast]
+	private void BroadcastPlayEliminationSound( Vector3 position )
+	{
+		if ( EliminatedSound == null ) return;
+		SoundHandle handle = Sound.Play( EliminatedSound, position );
+		handle.Volume = 1f;
+		// Eliminated players can fall far below the arena into the killbox — default falloff
+		// makes the cue inaudible from up top. Keep positional panning but skip distance falloff
+		// so listeners always hear it.
+		handle.DistanceAttenuation = false;
+	}
+
 	// Caller is expected to wrap this in Rpc.FilterInclude( ownerConnection ) so it
 	// only runs on the eliminated player's client. Without that filter every client
-	// would play the sound and enter spectator mode.
+	// would enter spectator mode.
 	[Rpc.Broadcast]
 	private void EnterSpectatorAfterElimination()
 	{
-		if ( EliminatedSound != null )
-		{
-			// ListenLocal makes the sound play from the listener regardless of world
-			// position — needed because the SoundEvent is 3D and Sound.Play with no
-			// position plays at world origin, which is far from the player when they
-			// fall into the killbox.
-			SoundHandle handle = Sound.Play( EliminatedSound );
-			handle.Volume = 0.2f;
-			handle.ListenLocal = true;
-		}
-
 		SpectatorMode.Current?.Activate();
 	}
 
