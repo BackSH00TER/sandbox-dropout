@@ -113,7 +113,7 @@
         "__version": 2,
         "Flags": 0,
         "Name": "TileTriggerCollider",
-        "Position": "0,0,0",
+        "Position": "0,0,1",
         "Rotation": "0,0,0,1",
         "Scale": "1,1,1",
         "Tags": "",
@@ -125,15 +125,16 @@
         "OwnerTransfer": 1,
         "Components": [
           {
-            "__type": "Sandbox.BoxCollider",
-            "__guid": "9d491a61-e82a-4a15-a2db-3d8ee5c1cfd8",
+            "__type": "Sandbox.PlaneCollider",
+            "__guid": "61128fb0-6a6c-4971-811f-e23e0bbded19",
             "__enabled": true,
             "Flags": 0,
-            "Center": "0,0,25",
+            "Center": "0,0,0",
             "ColliderFlags": 0,
             "Elasticity": null,
             "Friction": null,
             "IsTrigger": true,
+            "Normal": "0,0,1",
             "OnComponentDestroy": null,
             "OnComponentDisabled": null,
             "OnComponentEnabled": null,
@@ -145,8 +146,8 @@
             "OnTriggerEnter": null,
             "OnTriggerExit": null,
             "RollingResistance": null,
-            "Scale": "50,50,50",
-            "Static": false,
+            "Scale": "50,50",
+            "Static": true,
             "Surface": null,
             "SurfaceVelocity": "0,0,0"
           },
@@ -185,9 +186,9 @@
             },
             "TriggerCollider": {
               "_type": "component",
-              "component_id": "9d491a61-e82a-4a15-a2db-3d8ee5c1cfd8",
+              "component_id": "61128fb0-6a6c-4971-811f-e23e0bbded19",
               "go": "d54d48dc-af53-4f68-a242-6aeda9b63b29",
-              "component_type": "BoxCollider"
+              "component_type": "PlaneCollider"
             },
             "WobbleAngle": 5,
             "WobbleSpeed": 25
