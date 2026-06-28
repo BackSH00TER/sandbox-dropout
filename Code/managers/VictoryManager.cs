@@ -486,11 +486,19 @@ public sealed class VictoryManager : Component
     {
         if ( !Networking.IsHost ) return;
 
-        var loadOptions = new SceneLoadOptions();
-        loadOptions.SetScene( SceneToLoadFinish );
-        if ( !Game.ChangeScene( loadOptions ) )
+        if ( SceneToLoadFinish is null )
         {
-            Log.Error( $"Failed to load scene '{SceneToLoadFinish}'." );
+            Log.Error( "VictoryManager: SceneToLoadFinish is not assigned, can't return to lobby." );
+            return;
         }
+
+        BroadcastLoadLobbyScene();
+    }
+
+    // Loaded via per-client RPC instead of Game.ChangeScene so the loading screen doesn't flash during the transition.
+    [Rpc.Broadcast]
+    private void BroadcastLoadLobbyScene()
+    {
+        Game.ActiveScene.LoadFromFile( SceneToLoadFinish.ResourcePath );
     }
 }
