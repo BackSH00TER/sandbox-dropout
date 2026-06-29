@@ -1,0 +1,91 @@
+@using Sandbox
+@using Sandbox.UI
+@using System.Linq
+@inherits PanelComponent
+
+<root>
+    <div class="board">
+        <div class="title">@CurrentPageTitle</div>
+        <div class="page">
+            @switch (CurrentPage)
+            {
+                case PageType.Controls:
+                    <div class="controls-list">
+                        <div class="control-row">
+                            <div class="label">Move</div>
+                            <div class="glyphs">
+                                <Image class="glyph" Texture=@Input.GetGlyph("Forward", InputGlyphSize.Large,
+                                                                                                                                                                                        GlyphStyle.Light) />
+                                <Image class="glyph" Texture=@Input.GetGlyph("Left", InputGlyphSize.Large, GlyphStyle.Light) />
+                                <Image class="glyph" Texture=@Input.GetGlyph("Backward", InputGlyphSize.Large,
+                                                                                                                                                                                        GlyphStyle.Light) />
+                                <Image class="glyph" Texture=@Input.GetGlyph("Right", InputGlyphSize.Large, GlyphStyle.Light) />
+                            </div>
+                        </div>
+                        <div class="control-row">
+                            <div class="label">Jump</div>
+                            <div class="glyphs">
+                                <Image class="glyph" Texture=@Input.GetGlyph("Jump", InputGlyphSize.Large, GlyphStyle.Light) />
+                            </div>
+                        </div>
+                        <div class="control-row">
+                            <div class="label">Leap Dive</div>
+                            <div class="glyphs">
+                                <Image class="glyph" Texture=@Input.GetGlyph("Attack1", InputGlyphSize.Large,
+                                                                                                                                                                                        GlyphStyle.Light) />
+                            </div>
+                        </div>
+                    </div>
+                    break;
+                case PageType.Title:
+                    <div class="title-page">
+                        <img class="title-thumbnail" src="textures/Dropout_Thumbnail_910x512.png" />
+                    </div>
+                    break;
+            }
+        </div>
+    </div>
+</root>
+
+@code {
+    // To add a new page: add an enum value, add it to Pages, and add a switch case above.
+    private enum PageType
+    {
+        Controls,
+        Title,
+    }
+
+    private static readonly PageType[] Pages = new[]
+    {
+        PageType.Controls,
+        PageType.Title,
+    };
+
+    /// <summary>Seconds each page is shown before cycling to the next.</summary>
+    private const float PageDuration = 8f;
+
+    private int _pageIndex = 0;
+    private TimeUntil _nextPageAt = PageDuration;
+
+    private PageType CurrentPage => Pages[_pageIndex];
+
+    private string CurrentPageTitle => CurrentPage switch
+    {
+        PageType.Controls => "Controls",
+        PageType.Title => "",
+        _ => string.Empty,
+    };
+
+    protected override void OnUpdate()
+    {
+        if (Pages.Length <= 1) return;
+
+        if ((float)_nextPageAt <= 0f)
+        {
+            _pageIndex = (_pageIndex + 1) % Pages.Length;
+            _nextPageAt = PageDuration;
+        }
+    }
+
+    protected override int BuildHash() => System.HashCode.Combine(_pageIndex, Input.UsingController);
+}
