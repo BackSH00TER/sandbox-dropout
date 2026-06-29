@@ -127,7 +127,7 @@ public sealed class GameManager : Component, Component.INetworkListener
 	{
 		if ( EliminatedSound == null ) return;
 		SoundHandle handle = Sound.Play( EliminatedSound );
-		handle.Volume = 0.2f;
+		handle.Volume = 0.5f;
 	}
 
 	// Caller is expected to wrap this in Rpc.FilterInclude( ownerConnection ) so it
