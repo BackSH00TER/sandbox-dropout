@@ -72,9 +72,12 @@ public sealed class LobbyManager : Component
 		if ( !Networking.IsHost ) return;
 		if ( _hasLaunched ) return;
 
-		var states = Scene.GetAllComponents<PlayerReadyState>().ToList();
-		int readyCount = states.Count( s => s.IsReady );
-		bool hasMajority = readyCount >= states.Count * percentReadyRequired; //
+		var playerReadyStates = Scene.GetAllComponents<PlayerReadyState>().ToList();
+		int readyCount = playerReadyStates.Count( s => s.IsReady );
+		// MinPlayers gate also avoids the 0/0 case after a scene swap where no
+		// PlayerReadyState components exist yet and the majority check would pass.
+		bool hasMajority = playerReadyStates.Count >= MinPlayers
+			&& readyCount >= playerReadyStates.Count * percentReadyRequired;
 
 		if ( hasMajority && !IsLaunching )
 		{
