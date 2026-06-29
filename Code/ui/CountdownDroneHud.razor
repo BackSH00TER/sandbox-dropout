@@ -20,7 +20,6 @@
 
 @code {
     // Computed fresh from GameManager.CountdownTimer on every BuildHash / re-render.
-    // No OnUpdate, no cached state, no [Sync] — mirrors how LobbyBoard reads LobbyManager.
     private int seconds => CountdownDrone.Current?.DisplaySeconds ?? -1;
 
     protected override int BuildHash() => seconds;

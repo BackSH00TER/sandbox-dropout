@@ -416,7 +416,7 @@
               "VerticalAlign": "Center"
             },
             {
-              "__type": "Sandbox.lobby.LobbyBoard",
+              "__type": "Sandbox.ui.LobbyBoard",
               "__guid": "f190df3a-ac23-438d-90c5-07ed3c92638f",
               "__enabled": true,
               "Flags": 0,
@@ -536,7 +536,7 @@
               "VerticalAlign": "Center"
             },
             {
-              "__type": "Sandbox.lobby.InfoBoard",
+              "__type": "Sandbox.ui.InfoBoard",
               "__guid": "c0a7b004-1111-4a7b-8c9d-0123456789ab",
               "__enabled": true,
               "Flags": 0,
