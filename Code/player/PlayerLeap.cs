@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using System.Runtime.InteropServices.Swift;
 using Sandbox;
+using Sandbox.ui;
 
 public sealed class PlayerLeap : Component, PlayerController.IEvents
 {
@@ -48,6 +49,11 @@ public sealed class PlayerLeap : Component, PlayerController.IEvents
 
 	public void AddUI()
 	{
+		if ( !Network.IsOwner )
+		{
+			return;
+		}
+
 		AddComponent<ScreenPanel>();
 		AddComponent<PlayerControlsUI>();
 		PlayerControlsUI ui = GetComponent<PlayerControlsUI>();

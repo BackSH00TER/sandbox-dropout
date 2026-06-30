@@ -2,7 +2,6 @@
 @using Sandbox;
 @using Sandbox.UI;
 @inherits PanelComponent
-@namespace Sandbox
 
 <root>
 	<span class="prompt">
@@ -13,13 +12,17 @@
 
 @code
 {
-	[Property] public PlayerLeap PlayerLeap { get; set; }
-	public static string DivePrompt { get; set; }
-
-	private String divePromptClass;
+	public PlayerLeap PlayerLeap { get; set; }
+	public string DivePrompt { get; set; }
+	private String divePromptClass = "Ready";
 
 	protected override void OnFixedUpdate()
 	{
+		if (PlayerLeap == null)
+		{
+			return;
+		}
+
 		if (SpectatorMode.Current != null)
 		{
 			Enabled = !SpectatorMode.Current.IsActive;
@@ -30,6 +33,7 @@
 			DivePrompt = "-";
 			divePromptClass = "OnCooldown";
 		}
+
 		else
 		{
 			DivePrompt = Math.Floor(PlayerLeap.LeapCooldownTime + 1).ToString();
@@ -41,8 +45,5 @@
 		}
 	}
 
-	/// <summary>
-	/// the hash determines if the system should be rebuilt. If it changes, it will be rebuilt
-	/// </summary>
 	protected override int BuildHash() => System.HashCode.Combine(DivePrompt);
 }
