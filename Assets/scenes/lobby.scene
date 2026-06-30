@@ -183,7 +183,7 @@
       "OwnerTransfer": 1,
       "Components": [
         {
-          "__type": "Sandbox.NetworkHelper",
+          "__type": "LobbyNetworkSpawner",
           "__guid": "7b11b1e1-d35b-4460-b073-3b4249029f0b",
           "__enabled": true,
           "Flags": 0,

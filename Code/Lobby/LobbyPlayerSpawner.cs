@@ -23,6 +23,7 @@ public sealed class LobbyPlayerSpawner : Component, Component.INetworkListener
             _origin = LocalPosition;
             _hasOrigin = true;
         }
+        Log.Info( $"LobbyPlayerSpawner: origin={_origin}, spawnArea={SpawnAreaSize}" );
         RandomizePosition();
     }
 
@@ -30,11 +31,13 @@ public sealed class LobbyPlayerSpawner : Component, Component.INetworkListener
     {
         // Re-roll for the next join. Our OnActive may run before or after NetworkHelper's,
         // but since OnEnabled also randomized, the very first spawn is already off-center.
+        Log.Info( $"LobbyPlayerSpawner: OnActive for {channel}, re-rolling spawn position." );
         RandomizePosition();
     }
 
-    private void RandomizePosition()
+    public void RandomizePosition()
     {
+
         Vector3 half = SpawnAreaSize * 0.5f;
         LocalPosition = _origin + new Vector3(
             Game.Random.Float( -half.x, half.x ),
