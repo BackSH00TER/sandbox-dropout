@@ -1,4 +1,6 @@
+using System;
 using System.Numerics;
+using System.Runtime.InteropServices.Swift;
 using Sandbox;
 
 public sealed class PlayerLeap : Component, PlayerController.IEvents
@@ -6,29 +8,58 @@ public sealed class PlayerLeap : Component, PlayerController.IEvents
 	[Property] PlayerController TargetController { get; set; }
 	[Property] GameObject TargetBody { get; set; }
 	[Property] SkinnedModelRenderer TargetRenderer { get; set; }
-	[Property] float LeapCooldown { get; set; } = 3f;
 
-	bool isLeaping = false;
-	private TimeUntil leapCooldownTime = -1f;
+	public bool IsLeaping = false;
+	public float LeapCooldown = 3f;
+	public float LeapCooldownTime = 0f;
 
+	protected override void OnStart()
+	{
+		if ( !Network.IsOwner )
+		{
+			return;
+		}
+
+		AddUI();
+	}
 
 	protected override void OnFixedUpdate()
 	{
-		if ( IsProxy ) return;
-
-		if ( TargetController.UseInputControls == false )
+		if ( !Network.IsOwner )
+		{
 			return;
+		}
 
-		if ( Input.Pressed( "attack1" ) && isLeaping == false && leapCooldownTime )
-			BeginLeap();
+		if ( IsLeaping )
+		{
+			return;
+		}
+
+		LeapCooldownTime -= 1 * Time.Delta;
+
+		if ( LeapCooldownTime < 0.01 )
+		{
+			if ( Input.Pressed( "attack1" ) && TargetController.UseInputControls )
+			{
+				BeginLeap();
+			}
+		}
+	}
+
+	public void AddUI()
+	{
+		AddComponent<ScreenPanel>();
+		AddComponent<PlayerControlsUI>();
+		PlayerControlsUI ui = GetComponent<PlayerControlsUI>();
+		ui.PlayerLeap = this;
 	}
 
 	[Rpc.Broadcast]
 	public void BeginLeap()
 	{
 		// Set state
-		isLeaping = true;
-		leapCooldownTime = LeapCooldown;
+		IsLeaping = true;
+		LeapCooldownTime = LeapCooldown;
 
 		// Update properties
 		TargetController.UseInputControls = false;
@@ -51,13 +82,16 @@ public sealed class PlayerLeap : Component, PlayerController.IEvents
 
 	void PlayerController.IEvents.OnLanded( float distance, Vector3 impactVelocity )
 	{
-		if ( isLeaping )
+		if ( IsLeaping )
+		{
 			FinishLeap();
+		}
+
 	}
 
 	private void FinishLeap()
 	{
-		isLeaping = false;
+		IsLeaping = false;
 
 		TargetRenderer.Set( "special_movement_states", 0 );
 		TargetController.UseInputControls = true;

@@ -1,0 +1,48 @@
+@using System;
+@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+@namespace Sandbox
+
+<root>
+	<span class="prompt">
+		<Image class="glyph" Texture=@Input.GetGlyph("Attack1", InputGlyphSize.Medium, GlyphStyle.Light) />
+		<span class="text @(divePromptClass)">@DivePrompt</span>
+	</span>
+</root>
+
+@code
+{
+	[Property] public PlayerLeap PlayerLeap { get; set; }
+	public static string DivePrompt { get; set; }
+
+	private String divePromptClass;
+
+	protected override void OnFixedUpdate()
+	{
+		if (SpectatorMode.Current != null)
+		{
+			Enabled = !SpectatorMode.Current.IsActive;
+		}
+
+		if (PlayerLeap.IsLeaping)
+		{
+			DivePrompt = "-";
+			divePromptClass = "OnCooldown";
+		}
+		else
+		{
+			DivePrompt = Math.Floor(PlayerLeap.LeapCooldownTime + 1).ToString();
+			if (PlayerLeap.LeapCooldownTime < 0.01)
+			{
+				DivePrompt = "Dive";
+				divePromptClass = "Ready";
+			}
+		}
+	}
+
+	/// <summary>
+	/// the hash determines if the system should be rebuilt. If it changes, it will be rebuilt
+	/// </summary>
+	protected override int BuildHash() => System.HashCode.Combine(DivePrompt);
+}
