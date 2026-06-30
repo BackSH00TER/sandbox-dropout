@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Sandbox;
@@ -23,9 +22,15 @@ public sealed class LobbyNetworkSpawner : Component, Component.INetworkListener
     /// <summary>Prefab cloned for each connected player.</summary>
     [Property] public GameObject PlayerPrefab { get; set; }
 
-    /// <summary>Optional explicit spawn points. If empty, falls back to any <see cref="SpawnPoint"/> in the scene, then this component's transform.</summary>
-    [Property] public List<GameObject> SpawnPoints { get; set; }
+    /// <summary>Size of the box (centered on each <see cref="SpawnPoint"/>) that players are randomly spawned in.</summary>
+    [Property] public Vector3 SpawnAreaSize { get; set; } = new Vector3( 150f, 150f, 0f );
 
+    /// <summary>Draw the spawn jitter box around each <see cref="SpawnPoint"/> in the editor.</summary>
+    [Property] public bool ShouldDrawSpawnGizmo { get; set; } = false;
+
+    // Async, runs before OnStart. On the host's very first lobby load Networking isn't
+    // active yet — we create the lobby here. Game→lobby reloads skip this branch because
+    // Networking is already active by then.
     protected override async Task OnLoad()
     {
         if ( Scene.IsEditor ) return;
@@ -38,34 +43,46 @@ public sealed class LobbyNetworkSpawner : Component, Component.INetworkListener
         }
     }
 
+    // Fires once when this scene becomes active for the local client. We only do work on
+    // the host: walk every existing Connection and spawn a player for any that don't have
+    // one. This is the game→lobby path — those connections were already joined before the
+    // scene swap, so the engine won't fire OnActive for them again (see OnActive below).
     protected override void OnStart()
     {
-        // Game→lobby case: every client locally loads the lobby scene via Scene.Load,
-        // which doesn't re-fire OnActive for already-connected players. Host explicitly
-        // drives the spawn here so every connection gets a player.
         if ( !Networking.IsHost ) return;
         if ( !Networking.IsActive ) return;
 
         foreach ( Connection client in Connection.All )
         {
-            if ( HasPlayerFor( client ) ) continue;
+            if ( HasPlayerControllerFor( client ) ) continue;
+            Log.Info( $"LobbyNetworkSpawner: OnStart for {client}, spawning player." );
             SpawnFor( client );
         }
     }
 
+    // Engine-driven join hook, fired on the host when a Connection becomes active in this
+    // scene. Triggers for: the local connection on initial bootup, and any remote client
+    // joining a live lobby. Does NOT re-fire for connections that were already joined when
+    // the scene reloads locally — that case is handled by OnStart.
     public void OnActive( Connection channel )
     {
         // Guard against double-spawn — OnStart may have already covered this connection.
-        if ( HasPlayerFor( channel ) ) return;
+        if ( HasPlayerControllerFor( channel ) ) return;
+        Log.Info( $"LobbyNetworkSpawner: OnActive for {channel}, spawning player." );
         SpawnFor( channel );
     }
 
-    private bool HasPlayerFor( Connection client )
+    // True if a networked PlayerController owned by this connection already exists in the
+    // scene. Used by both OnStart and OnActive to avoid spawning a second player for the
+    // same connection when both paths cover it.
+    private bool HasPlayerControllerFor( Connection client )
     {
         return Scene.GetAllComponents<PlayerController>()
             .Any( pc => pc.IsValid() && pc.Network.Active && pc.Network.OwnerId == client.Id );
     }
 
+    // Spawn a player for the given connection. The host owns this logic, and the engine
+    // will automatically replicate the new player to the client.
     private void SpawnFor( Connection client )
     {
         if ( !PlayerPrefab.IsValid() ) return;
@@ -75,27 +92,42 @@ public sealed class LobbyNetworkSpawner : Component, Component.INetworkListener
         player.NetworkSpawn( client );
     }
 
+    // Pick a random spawn point and jitter it inside SpawnAreaSize.
     private Transform FindSpawnLocation()
     {
-        if ( SpawnPoints != null && SpawnPoints.Count > 0 )
+        SpawnPoint[] points = Scene.GetAllComponents<SpawnPoint>().ToArray();
+        if ( points.Length == 0 ) return WorldTransform;
+
+        SpawnPoint anchor = Game.Random.FromArray( points );
+        Transform anchorTransform = anchor.WorldTransform;
+
+        Vector3 half = SpawnAreaSize * 0.5f;
+        Vector3 offset = new Vector3(
+            Game.Random.Float( -half.x, half.x ),
+            Game.Random.Float( -half.y, half.y ),
+            Game.Random.Float( -half.z, half.z )
+        );
+        return anchorTransform.WithPosition( anchorTransform.Position + offset );
+    }
+
+    // Debug element that draws a gizmo around the spawn area to visualize the area.
+    protected override void DrawGizmos()
+    {
+        if ( !ShouldDrawSpawnGizmo ) return;
+        if ( SpawnAreaSize.IsNearZeroLength ) return;
+
+        SpawnPoint[] points = Scene.GetAllComponents<SpawnPoint>().ToArray();
+        if ( points.Length == 0 ) return;
+
+        Gizmo.Draw.Color = Gizmo.IsSelected ? Color.Cyan : Color.Cyan.WithAlpha( 0.4f );
+        BBox box = BBox.FromPositionAndSize( Vector3.Zero, SpawnAreaSize );
+
+        foreach ( SpawnPoint point in points )
         {
-            GameObject point = Game.Random.FromList( SpawnPoints );
-            if ( point.IsValid() )
+            using ( Gizmo.Scope( "lobby-spawn-area", point.WorldTransform ) )
             {
-                // Re-roll the jitter so each player in our OnStart loop gets a fresh position.
-                point.GetComponent<LobbyPlayerSpawner>()?.RandomizePosition();
-                return point.WorldTransform;
+                Gizmo.Draw.LineBBox( box );
             }
         }
-
-        SpawnPoint[] componentPoints = Scene.GetAllComponents<SpawnPoint>().ToArray();
-        if ( componentPoints.Length > 0 )
-        {
-            SpawnPoint picked = Game.Random.FromArray( componentPoints );
-            picked.GameObject.GetComponent<LobbyPlayerSpawner>()?.RandomizePosition();
-            return picked.WorldTransform;
-        }
-
-        return WorldTransform;
     }
 }
