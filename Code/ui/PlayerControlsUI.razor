@@ -12,17 +12,12 @@
 
 @code
 {
-	public PlayerLeap PlayerLeap { get; set; }
-	public string DivePrompt { get; set; }
+	[Property] public PlayerLeap PlayerLeap { get; set; }
+	public string DivePrompt;
 	private String divePromptClass = "Ready";
 
-	protected override void OnFixedUpdate()
+	protected override void OnUpdate()
 	{
-		if (PlayerLeap == null)
-		{
-			return;
-		}
-
 		if (SpectatorMode.Current != null)
 		{
 			Enabled = !SpectatorMode.Current.IsActive;
@@ -33,7 +28,6 @@
 			DivePrompt = "-";
 			divePromptClass = "OnCooldown";
 		}
-
 		else
 		{
 			DivePrompt = Math.Floor(PlayerLeap.LeapCooldownTime + 1).ToString();
@@ -45,5 +39,8 @@
 		}
 	}
 
-	protected override int BuildHash() => System.HashCode.Combine(DivePrompt);
+	protected override int BuildHash()
+	{
+		return System.HashCode.Combine(DivePrompt);
+	}
 }
