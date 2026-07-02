@@ -43,10 +43,9 @@ public sealed class LobbyNetworkSpawner : Component, Component.INetworkListener
         }
     }
 
-    // Fires once when this scene becomes active for the local client. We only do work on
-    // the host: walk every existing Connection and spawn a player for any that don't have
-    // one. This is the game→lobby path — those connections were already joined before the
-    // scene swap, so the engine won't fire OnActive for them again (see OnActive below).
+    // Handles transition from game scene to lobby scene to spawn players.
+    // The per-client scene swap doesn't re-fire OnActive for connections that were already joined, 
+    // so the host spawns any missing players here.
     protected override void OnStart()
     {
         if ( !Networking.IsHost ) return;
@@ -60,10 +59,8 @@ public sealed class LobbyNetworkSpawner : Component, Component.INetworkListener
         }
     }
 
-    // Engine-driven join hook, fired on the host when a Connection becomes active in this
-    // scene. Triggers for: the local connection on initial bootup, and any remote client
-    // joining a live lobby. Does NOT re-fire for connections that were already joined when
-    // the scene reloads locally — that case is handled by OnStart.
+    // Handles the initial bootup and any client joining a live lobby to spawn the player.
+    // Existing connections on a scene reload are covered by OnStart instead.
     public void OnActive( Connection channel )
     {
         // Guard against double-spawn — OnStart may have already covered this connection.
@@ -72,9 +69,7 @@ public sealed class LobbyNetworkSpawner : Component, Component.INetworkListener
         SpawnFor( channel );
     }
 
-    // True if a networked PlayerController owned by this connection already exists in the
-    // scene. Used by both OnStart and OnActive to avoid spawning a second player for the
-    // same connection when both paths cover it.
+    // Returns true if the given connection already has a player controller in the scene.
     private bool HasPlayerControllerFor( Connection client )
     {
         return Scene.GetAllComponents<PlayerController>()

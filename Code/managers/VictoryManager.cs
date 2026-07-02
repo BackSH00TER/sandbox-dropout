@@ -495,13 +495,8 @@ public sealed class VictoryManager : Component
         BroadcastLoadLobbyScene( SceneToLoadFinish.ResourcePath );
     }
 
-    // Per-client scene load instead of Game.ChangeScene. We tried Game.ChangeScene with
-    // ShowLoadingScreen=false and it both (a) failed to suppress the loading screen on
-    // remote clients and (b) caused a duplicate-GUID warning + broke player spawning on
-    // the host (Facepunch's own SaveSystem hits the same issue and works around it with
-    // internal engine plumbing not exposed to game projects). Loading per-client via
-    // Scene.Load lets us honor ShowLoadingScreen=false everywhere and skips whatever
-    // ChangeScene teardown was breaking the host spawn.
+    // Per-client Scene.Load to reload the lobby.
+    // Game.ChangeScene was tried first but wouldn't suppress the loading screen.
     [Rpc.Broadcast]
     private void BroadcastLoadLobbyScene( string resourcePath )
     {
