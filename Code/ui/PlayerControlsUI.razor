@@ -18,6 +18,11 @@
 
 	protected override void OnUpdate()
 	{
+		if (PlayerLeap == null)
+		{
+			return;
+		}
+
 		if (SpectatorMode.Current != null)
 		{
 			Enabled = !SpectatorMode.Current.IsActive;
