@@ -127,6 +127,7 @@ public sealed class GameManager : Component, Component.INetworkListener
 	{
 		if ( EliminatedSound == null ) return;
 		SoundHandle handle = Sound.Play( EliminatedSound );
+		if ( !handle.IsValid() ) return;
 		handle.Volume = 0.5f;
 		// SoundEvent is 3D — without ListenLocal it plays at world origin, which could be
 		// inaudible to a player who is not near it, (ie: a player who fell into the killbox).
