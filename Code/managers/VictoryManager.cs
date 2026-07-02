@@ -452,11 +452,10 @@ public sealed class VictoryManager : Component
             }
         }
 
-        if ( ConfettiSound != null )
-        {
-            SoundHandle handle = Sound.Play( ConfettiSound, spawnPos );
-            handle.Volume = 0.2f;
-        }
+        if ( ConfettiSound == null ) return;
+        SoundHandle handle = Sound.Play( ConfettiSound, spawnPos );
+        if ( !handle.IsValid() ) return;
+        handle.Volume = 0.2f;
     }
 
     // Fanned out from the host so every client (including host) sets the same local results
