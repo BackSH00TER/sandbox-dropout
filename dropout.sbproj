@@ -5,7 +5,7 @@
   "Ident": "dropout",
   "Schema": 1,
   "IncludeSourceFiles": false,
-  "Resources": null,
+  "Resources": "/textures/*",
   "PackageReferences": [],
   "EditorReferences": null,
   "Mounts": null,
