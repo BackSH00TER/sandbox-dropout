@@ -64,10 +64,4 @@ public sealed class PlayerFallSound : Component, PlayerController.IEvents
         // PlaySound from the the GameObject so the sound follows the player as they fall.
         GameObject.PlaySound( FallSound );
     }
-
-    // Stub — future hard-land impact thump keyed off `distance`.
-    void PlayerController.IEvents.OnLanded( float distance, Vector3 impactVelocity )
-    {
-        Log.Info( $"Landed with distance {distance} and impact velocity {impactVelocity}" );
-    }
 }
