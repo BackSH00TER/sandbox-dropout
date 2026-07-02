@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using System.Runtime.InteropServices.Swift;
 using Sandbox;
+using Sandbox.ui;
 
 public sealed class PlayerLeap : Component, PlayerController.IEvents
 {
@@ -19,11 +20,10 @@ public sealed class PlayerLeap : Component, PlayerController.IEvents
 		{
 			return;
 		}
-
 		AddUI();
 	}
 
-	protected override void OnFixedUpdate()
+	protected override void OnUpdate()
 	{
 		if ( !Network.IsOwner )
 		{
@@ -35,8 +35,7 @@ public sealed class PlayerLeap : Component, PlayerController.IEvents
 			return;
 		}
 
-		LeapCooldownTime -= 1 * Time.Delta;
-
+		LeapCooldownTime -= Time.Delta;
 		if ( LeapCooldownTime < 0.01 )
 		{
 			if ( Input.Pressed( "attack1" ) && TargetController.UseInputControls )
@@ -48,9 +47,10 @@ public sealed class PlayerLeap : Component, PlayerController.IEvents
 
 	public void AddUI()
 	{
-		AddComponent<ScreenPanel>();
-		AddComponent<PlayerControlsUI>();
-		PlayerControlsUI ui = GetComponent<PlayerControlsUI>();
+		GameObject gameObject = new GameObject( "PlayerControlsUI" );
+		gameObject.NetworkMode = NetworkMode.Never;
+		gameObject.AddComponent<ScreenPanel>();
+		var ui = gameObject.AddComponent<PlayerControlsUI>();
 		ui.PlayerLeap = this;
 	}
 
