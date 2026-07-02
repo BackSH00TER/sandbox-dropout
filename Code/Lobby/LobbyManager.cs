@@ -25,6 +25,27 @@ public sealed class LobbyManager : Component
 	/// <summary>Scene-wide singleton so the lobby UI can find us without a hard reference.</summary>
 	public static LobbyManager Current { get; private set; }
 
+	/// <summary>
+	/// Cross-scene banner text (e.g. "host left"). Set from another scene right before
+	/// loading the lobby; the lobby UI shows it until <see cref="LobbyMessageExpires"/> elapses.
+	/// </summary>
+	public static string LobbyMessage { get; private set; }
+
+	/// <summary>Real-time deadline for <see cref="LobbyMessage"/>. Static so it survives the scene swap.</summary>
+	public static RealTimeUntil LobbyMessageExpires { get; private set; }
+
+	private const float LobbyMessageDuration = 8f;
+
+	/// <summary>Show a banner in the lobby UI for the next <see cref="LobbyMessageDuration"/> seconds.</summary>
+	public static void ShowLobbyMessage( string message )
+	{
+		LobbyMessage = message;
+		LobbyMessageExpires = LobbyMessageDuration;
+	}
+
+	/// <summary>True while <see cref="LobbyMessage"/> should be rendered.</summary>
+	public static bool HasActiveLobbyMessage => !string.IsNullOrEmpty( LobbyMessage ) && LobbyMessageExpires > 0f;
+
 	/// <summary>Seconds to wait, with everyone still ready, before actually loading the game scene.</summary>
 	private float LaunchSeconds { get; set; } = 3f;
 

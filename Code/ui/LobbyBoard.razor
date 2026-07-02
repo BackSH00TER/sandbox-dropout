@@ -5,6 +5,11 @@
 
 <root>
     <div class="board">
+        @if (LobbyManager.HasActiveLobbyMessage)
+        {
+            <div class="message-banner">@LobbyManager.LobbyMessage</div>
+        }
+
         @if (LaunchSeconds > 0)
         {
             <div class="title">Starting in</div>
@@ -41,6 +46,6 @@
     {
         IEnumerable<string> parts = Scene.GetAllComponents<PlayerReadyState>()
             .Select(p => $"{p.DisplayName}:{p.IsReady}");
-        return System.HashCode.Combine(string.Join(",", parts), LaunchSeconds);
+        return System.HashCode.Combine(string.Join(",", parts), LaunchSeconds, LobbyManager.HasActiveLobbyMessage);
     }
 }

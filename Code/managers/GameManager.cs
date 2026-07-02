@@ -173,4 +173,26 @@ public sealed class GameManager : Component, Component.INetworkListener
 		Log.Info( "Joining as spectator." );
 		SpectatorMode.Current?.Activate();
 	}
+
+	// Fires on the peer that just inherited the host role after a migration. The game's
+	// host-only state doesn't survive migration cleanly, so bail everyone back to the lobby.
+	public void OnBecameHost( Connection previousHost )
+	{
+		string lobbyScenePath = VictoryManager?.SceneToLoadFinish?.ResourcePath;
+		if ( string.IsNullOrEmpty( lobbyScenePath ) )
+		{
+			Log.Error( "GameManager: no lobby scene assigned on VictoryManager, can't return to lobby after host migration." );
+			return;
+		}
+
+		Log.Info( "Host migrated. Returning everyone to lobby." );
+		BroadcastReturnToLobby( "Host has left the game.", lobbyScenePath );
+	}
+
+	[Rpc.Broadcast]
+	private void BroadcastReturnToLobby( string reason, string lobbyScenePath )
+	{
+		LobbyManager.ShowLobbyMessage( reason );
+		Game.ActiveScene.LoadFromFile( lobbyScenePath );
+	}
 }

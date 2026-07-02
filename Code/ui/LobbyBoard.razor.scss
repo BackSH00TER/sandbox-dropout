@@ -10,6 +10,19 @@ LobbyBoard {
         height: 100%;
     }
 
+    .message-banner {
+        font-size: 168px;
+        font-weight: 700;
+        color: #ffcc33;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 16px;
+        padding: 24px 32px;
+        margin-bottom: 32px;
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
     .title {
         font-size: 180px;
         font-weight: 800;
