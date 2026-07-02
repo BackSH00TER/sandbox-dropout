@@ -68,6 +68,6 @@ public sealed class PlayerFallSound : Component, PlayerController.IEvents
     // Stub — future hard-land impact thump keyed off `distance`.
     void PlayerController.IEvents.OnLanded( float distance, Vector3 impactVelocity )
     {
-        Log.Info( $"Landed with distance {distance} and impact velocity {impactVelocity}" );
+
     }
 }
